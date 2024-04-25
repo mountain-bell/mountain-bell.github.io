@@ -1,0 +1,161 @@
+@charset "utf-8";
+
+.game_screen {
+	height: auto;
+	width: 100%;
+}
+
+.reversi_area {
+	aspect-ratio: 1/1;
+	display: inline-block;
+	height: auto;
+	width: 100%;
+}
+
+.reversi_area table {
+	border: 2px solid #7db4e6;
+	height: 100%;
+	padding: 1px;
+	width: 100%;
+}
+
+.reversi_area td {
+	background: #7db4e6;
+	padding: 3px;
+}
+
+button.reversi_piece {
+	background: none;
+	border-radius: 100vh;
+	border: none;
+	padding: 45%;
+}
+
+button.black_piece, button.black_piece:hover, #icon_black {
+	background: black;
+}
+
+button.white_piece, button.white_piece:hover, #icon_white {
+	background: white;
+}
+
+button.on_special {
+	background: #ffff00;
+	border: 2px solid #ff9900;
+	color: #ff9900;
+}
+
+button.keep_special {
+	background: #ff9900;
+	border: 2px solid #ff3300;
+	color: #ff3300;
+	pointer-events: none;
+}
+
+.side_by_side {
+	display: inline-block;
+}
+
+.side_by_side button {
+	display: block;
+}
+
+.button_area_black {
+	display: inline-block;
+	margin: 0 0 7px;
+	transform: rotate(180deg);
+	vertical-align: top;
+}
+
+#modal_black {
+	transform: rotate(180deg);
+}
+
+.button_area_white {
+	display: inline-block;
+	margin: 0 0 7px;
+	vertical-align: top;
+}
+
+.icon_turn {
+	border: 2px solid #7db4e6;
+	height: 3rem;
+	margin: 1rem auto;
+	transform: rotate(45deg);
+	transition: 0.5s;
+	width: 3rem;
+}
+
+.your_turn {
+	transform: rotate(0);
+	transition: 0.5s;
+}
+
+.your_turn::before {
+	color: #7db4e6;
+	content: "your turn";
+	font-weight: bold;
+}
+
+.count_text {
+	color: #494949;
+	font-weight: bold;
+}
+
+@media (orientation: landscape) {
+
+	.game_screen {
+		height: 100vh;
+	}
+	
+	.side_by_side {
+		display: block;
+	}
+	
+	.reversi_area {
+		height: 90%;
+		width: auto;
+	}
+	
+	.button_area_black, #modal_black {
+		transform: rotate(0);
+	}
+	
+	button.vertical {
+		display: block;
+		writing-mode: vertical-rl;
+	}
+
+}
+
+@media (min-aspect-ratio: 860/695) and (max-aspect-ratio: 935/695) {
+
+	.reversi_area {
+		height: 80%;
+	}
+
+}
+
+@media (min-aspect-ratio: 745/695) and (max-aspect-ratio: 860/695) {
+
+	.reversi_area {
+		height: 65%;
+	}
+
+}
+
+@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 745/695) {
+
+	.reversi_area {
+		height: 55%;
+	}
+
+}
+
+@media (max-aspect-ratio: 386/695) {
+
+	button.button_small {
+		font-size: 70%;
+	}
+
+}
