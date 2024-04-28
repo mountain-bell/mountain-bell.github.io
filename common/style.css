@@ -1,5 +1,9 @@
 @charset "utf-8";
 
+body {
+	font-family: sans-serif;
+}
+
 header {
 	background: #7db4e6;
 	display: flex;
@@ -161,6 +165,15 @@ button.silent_inactive {
 	color: #494949;
 	font-weight: bold;
 	margin: 0 0 30px;
+}
+
+.annotation {
+	padding-left: 2em;
+	text-indent: -1em;
+}
+
+.annotation:before {
+	content: "※";
 }
 
 .center {
