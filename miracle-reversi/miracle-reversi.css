@@ -131,6 +131,8 @@ button.keep_special {
 	button.vertical span {
 		white-space: pre;
 		writing-mode: vertical-rl;
+		display: inline-block;
+		text-align: center;
 	}
 
 }
