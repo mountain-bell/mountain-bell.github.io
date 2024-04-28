@@ -124,6 +124,7 @@ button.keep_special {
 	}
 	
 	button.vertical {
+		display: flex;
 		margin: 0.5rem auto;
 		padding: 0.5rem 1rem;
 	}
@@ -131,8 +132,6 @@ button.keep_special {
 	button.vertical span {
 		white-space: pre;
 		writing-mode: vertical-rl;
-		display: inline-block;
-		text-align: center;
 	}
 
 }
@@ -165,6 +164,14 @@ button.keep_special {
 
 	.side_by_side button {
 		font-size: 70%;
+	}
+
+}
+
+@media (max-height: 600px) {
+
+	.game_screen {
+		height: 600px;
 	}
 
 }
