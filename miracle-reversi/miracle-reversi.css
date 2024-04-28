@@ -58,6 +58,7 @@ button.keep_special {
 
 .side_by_side button {
 	display: block;
+	margin: 4px 1px 4px 0.5rem;
 }
 
 .button_area_black {
@@ -125,6 +126,9 @@ button.keep_special {
 	button.vertical {
 		margin: 0.5rem auto;
 		padding: 0.5rem 1rem;
+	}
+	
+	button.vertical span {
 		white-space: pre;
 		writing-mode: vertical-rl;
 	}
@@ -155,9 +159,9 @@ button.keep_special {
 
 }
 
-@media (max-aspect-ratio: 401/695) {
+@media (max-aspect-ratio: 410/695) {
 
-	button.button_small {
+	.side_by_side button {
 		font-size: 70%;
 	}
 
