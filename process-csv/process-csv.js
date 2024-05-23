@@ -92,14 +92,12 @@
 				const contents = event.target.result;
 				// CSVファイルの行ごとに処理
 				let rows = contents.split('\n');
-				// 各行の末尾の改行コードをトリム
-				rows = rows.map(row => row.trim());
 				// 行を回す
 				rows.forEach((row, rowIndex) => {
 					// 改行だけの行で置換処理を止める
 					if(row) {
-						// 行をカンマで分割してセルに格納
-						const cells = row.split(',');
+						// 行をカンマで分割してセルをトリム
+						const cells = row.split(',').map(cell => cell.trim());
 						// 加工用変数をコピー
 						let input_process_copy = input_process;
 						// カラムを回す
