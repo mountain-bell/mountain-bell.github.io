@@ -26,16 +26,20 @@
 
 button.reversi_piece {
 	background: none;
-	border-radius: 100vh;
 	border: none;
+	border-radius: 100vh;
 	padding: 45%;
 }
 
-button.black_piece, button.black_piece:hover, #icon_black {
+button.black_piece,
+button.black_piece:hover,
+#icon_black {
 	background: black;
 }
 
-button.white_piece, button.white_piece:hover, #icon_white {
+button.white_piece,
+button.white_piece:hover,
+#icon_white {
 	background: white;
 }
 
@@ -104,114 +108,93 @@ button.keep_special {
 }
 
 @media (orientation: landscape) {
-
 	.game_screen {
 		height: 100vh;
 	}
-	
+
 	.side_by_side {
 		display: block;
 	}
-	
+
 	.reversi_area {
 		height: 90%;
 		margin: auto 0.5rem;
 		width: auto;
 	}
-	
-	.button_area_black, #modal_black {
+
+	.button_area_black,
+	#modal_black {
 		transform: rotate(0);
 	}
-	
+
 	button.vertical {
 		display: flex;
 		margin: 0.5rem auto;
 		padding: 0.5rem 1rem;
 	}
-	
+
 	button.vertical span {
 		white-space: pre;
 		writing-mode: vertical-rl;
 	}
-
 }
 
 @media (min-aspect-ratio: 860/695) and (max-aspect-ratio: 935/695) {
-
 	.reversi_area {
 		height: 80%;
 	}
-
 }
 
 @media (min-aspect-ratio: 745/695) and (max-aspect-ratio: 860/695) {
-
 	.reversi_area {
 		height: 65%;
 	}
-
 }
 
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 745/695) {
-
 	.reversi_area {
 		height: 55%;
 	}
-
 }
 
 @media (max-aspect-ratio: 410/695) {
-
 	.side_by_side button {
 		font-size: 70%;
 	}
-
 }
 
 @media (max-height: 600px) {
-
 	.game_screen {
 		margin: 0 0 100px 0;
 	}
-
 }
 
 @media (max-height: 500px) {
-
 	.game_screen {
 		margin: 0 0 200px 0;
 	}
-
 }
 
 @media (max-height: 400px) {
-
 	.game_screen {
 		margin: 0 0 300px 0;
 	}
-
 }
 
 @media (max-height: 300px) {
-
 	.game_screen {
 		margin: 0 0 400px 0;
 	}
-
 }
 
 @media (max-height: 200px) {
-
 	.game_screen {
 		margin: 0 0 500px 0;
 	}
-
 }
 
 @media (max-height: 100px) {
-
 	.game_screen {
 		margin: 0 0 600px 0;
 	}
-
 }
