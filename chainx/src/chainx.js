@@ -1218,9 +1218,11 @@ function $X(input) {
 	return new ChainX(input);
 }
 
+// グローバル環境向け（<script> タグで使用）
 if (typeof window !== "undefined") {
 	window.ChainX = ChainX;
 	window.$X = $X;
 }
 
-export { ChainX, $X };
+// ES Modules 対応（必要な人はコメントを外してください）
+// export { ChainX, $X };
