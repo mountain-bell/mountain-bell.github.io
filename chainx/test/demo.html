@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<title>ChainX GUI デモ</title>
+		<style>
+			body {
+				font-family: sans-serif;
+				padding: 2rem;
+				background: #f9f9f9;
+			}
+			#log {
+				margin-top: 1rem;
+				padding: 1rem;
+				background: #fff;
+				border: 1px solid #ccc;
+				min-height: 100px;
+				font-family: monospace;
+			}
+			button {
+				margin-right: 0.5rem;
+				margin-top: 0.5rem;
+				padding: 0.5rem 1rem;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>🧪 ChainX GUI デモ</h1>
+		<div>
+			<button onclick="pushItem()">push(99)</button>
+			<button onclick="popItem()">pop()</button>
+			<button onclick="sliceItem()">slice(1, 3)</button>
+			<button onclick="reset()">reset()</button>
+		</div>
+		<div id="log">結果がここに表示されます</div>
+
+		<script src="../src/chainx.js"></script>
+		<script>
+			const chain = $X([1, 2, 3]);
+			const logDiv = document.getElementById("log");
+
+			function log(label, value) {
+				logDiv.innerHTML = `<strong>${label}:</strong> ${JSON.stringify(
+					value
+				)}`;
+			}
+
+			function pushItem() {
+				chain.push(99);
+				log("push(99)", chain.value());
+			}
+
+			function popItem() {
+				chain.pop();
+				log("pop()", chain.value());
+			}
+
+			function sliceItem() {
+				chain.slice(1, 3);
+				log("slice(1, 3)", chain.value());
+			}
+
+			function reset() {
+				chain.reset();
+				log("reset()", chain.value());
+			}
+		</script>
+	</body>
+</html>
