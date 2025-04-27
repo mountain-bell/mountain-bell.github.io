@@ -9,6 +9,8 @@ class ChainX {
 		this._value = value;
 		this._initial = this._clone(value);
 		this._queue = [];
+		this._recordedSteps = [];
+		this._recording = false;
 	}
 
 	_clone(value) {
@@ -33,6 +35,41 @@ class ChainX {
 	clear() {
 		this._value = null;
 		return this;
+	}
+
+	startRecipe() {
+		this._recordedSteps = [];
+		this._recording = true;
+		return this;
+	}
+
+	toRecipe() {
+		const steps = [...this._recordedSteps];
+		return (input) => {
+			let inst = input instanceof ChainX ? input : $X(input);
+			for (const [method, args] of steps) {
+				if (typeof inst[method] === "function") {
+					inst = inst[method](...args);
+				}
+			}
+			return inst;
+		};
+	}
+
+	applyRecipe(recipeFn) {
+		if (typeof recipeFn === "function") {
+			const result = recipeFn(this);
+			if (result instanceof ChainX) {
+				return result;
+			}
+		}
+		return this;
+	}
+
+	_record(method, args) {
+		if (this._recording) {
+			this._recordedSteps.push([method, args]);
+		}
 	}
 
 	log(label = "ChainX") {
@@ -159,6 +196,7 @@ class ChainX {
 	}
 
 	renameKeys(mapping) {
+		this._record("renameKeys", [mapping]);
 		if (
 			typeof this._value === "object" &&
 			this._value !== null &&
@@ -174,6 +212,7 @@ class ChainX {
 	}
 
 	defaults(defaultsObj) {
+		this._record("defaults", [defaultsObj]);
 		if (
 			typeof this._value === "object" &&
 			this._value !== null &&
@@ -185,6 +224,7 @@ class ChainX {
 	}
 
 	mergeDeep(source) {
+		this._record("mergeDeep", [source]);
 		const merge = (target, source) => {
 			for (const key in source) {
 				if (
@@ -206,6 +246,7 @@ class ChainX {
 	}
 
 	pick(keys) {
+		this._record("pick", [keys]);
 		if (
 			typeof this._value === "object" &&
 			this._value !== null &&
@@ -220,6 +261,7 @@ class ChainX {
 	}
 
 	omit(keys) {
+		this._record("omit", [keys]);
 		if (
 			typeof this._value === "object" &&
 			this._value !== null &&
@@ -234,6 +276,7 @@ class ChainX {
 	}
 
 	mapObject(fn) {
+		this._record("mapObject", [fn]);
 		if (
 			typeof this._value === "object" &&
 			this._value !== null &&
@@ -250,6 +293,7 @@ class ChainX {
 	}
 
 	filterObject(fn) {
+		this._record("filterObject", [fn]);
 		if (
 			typeof this._value === "object" &&
 			this._value !== null &&
@@ -266,6 +310,7 @@ class ChainX {
 
 	// 配列操作
 	push(...items) {
+		this._record("push", [...items]);
 		if (Array.isArray(this._value)) {
 			this._value = [...this._value, ...items];
 		}
@@ -273,6 +318,7 @@ class ChainX {
 	}
 
 	pop() {
+		this._record("pop", []);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.slice(0, -1);
 		}
@@ -280,6 +326,7 @@ class ChainX {
 	}
 
 	unshift(...items) {
+		this._record("unshift", [...items]);
 		if (Array.isArray(this._value)) {
 			this._value = [...items, ...this._value];
 		}
@@ -287,6 +334,7 @@ class ChainX {
 	}
 
 	shift() {
+		this._record("shift", []);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.slice(1);
 		}
@@ -294,6 +342,7 @@ class ChainX {
 	}
 
 	splice(start, deleteCount, ...items) {
+		this._record("splice", [start, deleteCount, ...items]);
 		if (Array.isArray(this._value)) {
 			const before = this._value.slice(0, start);
 			const after = this._value.slice(start + deleteCount);
@@ -303,6 +352,7 @@ class ChainX {
 	}
 
 	insert(index, ...items) {
+		this._record("insert", [index, ...items]);
 		if (Array.isArray(this._value)) {
 			const before = this._value.slice(0, index);
 			const after = this._value.slice(index);
@@ -312,6 +362,7 @@ class ChainX {
 	}
 
 	sort(compareFn) {
+		this._record("sort", [compareFn]);
 		if (Array.isArray(this._value)) {
 			this._value = [...this._value].sort(compareFn);
 		}
@@ -319,6 +370,7 @@ class ChainX {
 	}
 
 	reverse() {
+		this._record("reverse", []);
 		if (Array.isArray(this._value)) {
 			this._value = [...this._value].reverse();
 		}
@@ -326,6 +378,7 @@ class ChainX {
 	}
 
 	filterMap(fn) {
+		this._record("filterMap", [fn]);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.map(fn).filter((v) => v != null);
 		}
@@ -333,6 +386,7 @@ class ChainX {
 	}
 
 	reject(fn) {
+		this._record("reject", [fn]);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.filter((item) => !fn(item));
 		}
@@ -340,6 +394,7 @@ class ChainX {
 	}
 
 	groupBy(fn) {
+		this._record("groupBy", [fn]);
 		if (Array.isArray(this._value)) {
 			const grouped = {};
 			for (const item of this._value) {
@@ -353,6 +408,7 @@ class ChainX {
 	}
 
 	countBy(fn) {
+		this._record("countBy", [fn]);
 		if (Array.isArray(this._value)) {
 			const counts = {};
 			for (const item of this._value) {
@@ -365,6 +421,7 @@ class ChainX {
 	}
 
 	compact() {
+		this._record("compact", []);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.filter(Boolean);
 		}
@@ -372,12 +429,14 @@ class ChainX {
 	}
 
 	uniq() {
+		this._record("uniq", []);
 		if (Array.isArray(this._value))
 			this._value = Array.from(new Set(this._value));
 		return this;
 	}
 
 	shuffle() {
+		this._record("shuffle", []);
 		if (Array.isArray(this._value)) {
 			const arr = [...this._value];
 			for (let i = arr.length - 1; i > 0; i--) {
@@ -390,6 +449,7 @@ class ChainX {
 	}
 
 	sample() {
+		this._record("sample", []);
 		if (Array.isArray(this._value)) {
 			const i = Math.floor(Math.random() * this._value.length);
 			this._value = this._value[i];
@@ -398,6 +458,7 @@ class ChainX {
 	}
 
 	chunk(size) {
+		this._record("chunk", [size]);
 		if (Array.isArray(this._value) && size > 0) {
 			const chunks = [];
 			for (let i = 0; i < this._value.length; i += size) {
@@ -409,6 +470,7 @@ class ChainX {
 	}
 
 	partition(fn) {
+		this._record("partition", [fn]);
 		if (Array.isArray(this._value)) {
 			const truthy = [],
 				falsy = [];
@@ -421,16 +483,19 @@ class ChainX {
 	}
 
 	take(n) {
+		this._record("take", [n]);
 		if (Array.isArray(this._value)) this._value = this._value.slice(0, n);
 		return this;
 	}
 
 	takeRight(n) {
+		this._record("takeRight", [n]);
 		if (Array.isArray(this._value)) this._value = this._value.slice(-n);
 		return this;
 	}
 
 	slice(start, end) {
+		this._record("slice", [start, end]);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.slice(start, end);
 		}
@@ -438,6 +503,7 @@ class ChainX {
 	}
 
 	first() {
+		this._record("first", []);
 		if (this._value instanceof NodeList || Array.isArray(this._value)) {
 			this._value = this._value[0] || null;
 		}
@@ -445,6 +511,7 @@ class ChainX {
 	}
 
 	last() {
+		this._record("last", []);
 		if (this._value instanceof NodeList || Array.isArray(this._value)) {
 			this._value = this._value[this._value.length - 1] || null;
 		}
@@ -452,6 +519,7 @@ class ChainX {
 	}
 
 	zip(...arrays) {
+		this._record("zip", [...arrays]);
 		if (Array.isArray(this._value)) {
 			const minLength = Math.min(
 				this._value.length,
@@ -466,6 +534,7 @@ class ChainX {
 	}
 
 	difference(otherArray) {
+		this._record("difference", [otherArray]);
 		if (Array.isArray(this._value) && Array.isArray(otherArray)) {
 			this._value = this._value.filter((x) => !otherArray.includes(x));
 		}
@@ -473,6 +542,7 @@ class ChainX {
 	}
 
 	intersection(otherArray) {
+		this._record("intersection", [otherArray]);
 		if (Array.isArray(this._value) && Array.isArray(otherArray)) {
 			this._value = this._value.filter((x) => otherArray.includes(x));
 		}
@@ -480,6 +550,7 @@ class ChainX {
 	}
 
 	sum() {
+		this._record("sum", []);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.reduce((a, b) => a + b, 0);
 		}
@@ -487,6 +558,7 @@ class ChainX {
 	}
 
 	avg() {
+		this._record("avg", []);
 		if (Array.isArray(this._value) && this._value.length > 0) {
 			const sum = this._value.reduce((a, b) => a + b, 0);
 			this._value = sum / this._value.length;
@@ -497,6 +569,7 @@ class ChainX {
 	}
 
 	min() {
+		this._record("min", []);
 		if (Array.isArray(this._value)) {
 			this._value = Math.min(...this._value);
 		}
@@ -504,6 +577,7 @@ class ChainX {
 	}
 
 	max() {
+		this._record("max", []);
 		if (Array.isArray(this._value)) {
 			this._value = Math.max(...this._value);
 		}
@@ -511,6 +585,7 @@ class ChainX {
 	}
 
 	median() {
+		this._record("median", []);
 		if (Array.isArray(this._value) && this._value.length > 0) {
 			const sorted = [...this._value].sort((a, b) => a - b);
 			const mid = Math.floor(sorted.length / 2);
@@ -525,6 +600,7 @@ class ChainX {
 	}
 
 	range(start, end) {
+		this._record("range", [start, end]);
 		if (typeof start === "number" && typeof end === "number") {
 			this._value = Array.from({ length: end - start }, (_, i) => i + start);
 		}
@@ -532,6 +608,7 @@ class ChainX {
 	}
 
 	rangeMap(start, end, fn) {
+		this._record("rangeMap", [start, end, fn]);
 		const arr = Array.from({ length: end - start + 1 }, (_, i) =>
 			fn(i + start)
 		);
@@ -540,6 +617,7 @@ class ChainX {
 	}
 
 	mapToObject(fn) {
+		this._record("mapToObject", [fn]);
 		if (Array.isArray(this._value)) {
 			this._value = Object.fromEntries(this._value.map(fn));
 		}
@@ -547,6 +625,7 @@ class ChainX {
 	}
 
 	pluck(key) {
+		this._record("pluck", [key]);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.map((item) =>
 				item && typeof item === "object" ? item[key] : undefined
@@ -556,6 +635,7 @@ class ChainX {
 	}
 
 	sortBy(selector) {
+		this._record("sortBy", [selector]);
 		if (Array.isArray(this._value)) {
 			const get =
 				typeof selector === "function" ? selector : (item) => item?.[selector];
@@ -570,11 +650,13 @@ class ChainX {
 
 	// チェーン操作・条件付き
 	tap(fn) {
+		this._record("tap", [fn]);
 		fn(this._value);
 		return this;
 	}
 
 	tapIf(condFn, tapFn) {
+		this._record("tapIf", [condFn, tapFn]);
 		if (condFn(this._value)) {
 			tapFn(this._value);
 		}
@@ -582,6 +664,7 @@ class ChainX {
 	}
 
 	pipe(...fns) {
+		this._record("pipe", [...fns]);
 		if (typeof this._value !== "undefined") {
 			this._value = fns.reduce((val, fn) => fn(val), this._value);
 		}
@@ -589,6 +672,7 @@ class ChainX {
 	}
 
 	breakIf(condFn) {
+		this._record("breakIf", [condFn]);
 		if (condFn(this._value)) {
 			this._value = undefined;
 		}
@@ -599,6 +683,7 @@ class ChainX {
 	_error = null;
 
 	safe(fn, onError) {
+		this._record("safe", [fn, onError]);
 		this._error = null;
 		try {
 			fn(this._value);
@@ -614,6 +699,7 @@ class ChainX {
 	}
 
 	tapCatch(fn) {
+		this._record("tapCatch", [fn]);
 		if (this._error) {
 			fn(this._error, this._value);
 		}
@@ -621,6 +707,7 @@ class ChainX {
 	}
 
 	catchOnly(handler) {
+		this._record("catchOnly", [handler]);
 		if (this._error) {
 			handler(this._error, this._value);
 		}
@@ -628,6 +715,7 @@ class ChainX {
 	}
 
 	ensure(fn) {
+		this._record("ensure", [fn]);
 		try {
 			fn(this._value);
 		} finally {
@@ -636,6 +724,7 @@ class ChainX {
 	}
 
 	tryMap(fn) {
+		this._record("tryMap", [fn]);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.map((item) => {
 				try {
@@ -654,11 +743,13 @@ class ChainX {
 	}
 
 	clearError() {
+		this._record("clearError", []);
 		this._error = null;
 		return this;
 	}
 
 	retry(fn, times = 1) {
+		this._record("retry", [fn, times]);
 		let attempt = 0;
 		this._error = null;
 		while (attempt <= times) {
@@ -675,6 +766,7 @@ class ChainX {
 	}
 
 	fallback(defaultValue) {
+		this._record("fallback", [defaultValue]);
 		if (this._error != null) {
 			this._value = defaultValue;
 			this._error = null;
@@ -684,6 +776,7 @@ class ChainX {
 
 	// 非同期処理
 	tapAsync(fn) {
+		this._record("tapAsync", [fn]);
 		if (this._value instanceof Promise) {
 			this._value = this._value.then(fn);
 		} else {
@@ -693,6 +786,7 @@ class ChainX {
 	}
 
 	tapAsyncIf(cond, fn) {
+		this._record("tapAsyncIf", [cond, fn]);
 		if (cond(this._value)) {
 			return this.tapAsync(fn);
 		}
@@ -700,6 +794,7 @@ class ChainX {
 	}
 
 	mapAsync(fn) {
+		this._record("mapAsync", [fn]);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.reduce((p, item) => {
 				return p.then(async (acc) => {
@@ -712,6 +807,7 @@ class ChainX {
 	}
 
 	mapLimitAsync(fn, limit = 3) {
+		this._record("mapLimitAsync", [fn, limit]);
 		if (!Array.isArray(this._value)) return this;
 		const arr = this._value;
 		let i = 0;
@@ -733,6 +829,7 @@ class ChainX {
 	}
 
 	forEachAsync(fn) {
+		this._record("forEachAsync", [fn]);
 		if (Array.isArray(this._value)) {
 			this._value = this._value.reduce((p, item) => {
 				return p.then(() => fn(item));
@@ -742,6 +839,7 @@ class ChainX {
 	}
 
 	pipeAsync(...fns) {
+		this._record("pipeAsync", [...fns]);
 		if (!(this._value instanceof Promise)) {
 			this._value = Promise.resolve(this._value);
 		}
@@ -750,6 +848,7 @@ class ChainX {
 	}
 
 	retryAsync(fn, times = 3, delay = 0) {
+		this._record("retryAsync", [fn, times, delay]);
 		this._error = null;
 		let attempt = 0;
 
@@ -775,6 +874,7 @@ class ChainX {
 	}
 
 	timeout(ms) {
+		this._record("timeout", [ms]);
 		if (!(this._value instanceof Promise)) return this;
 		const timeoutPromise = new Promise((_, reject) =>
 			setTimeout(() => reject(new Error("Timeout")), ms)
@@ -784,6 +884,7 @@ class ChainX {
 	}
 
 	wait(ms) {
+		this._record("wait", [ms]);
 		this._value = new Promise((resolve) => {
 			setTimeout(() => resolve(this._value), ms);
 		});
@@ -795,6 +896,7 @@ class ChainX {
 	}
 
 	async await() {
+		this._record("await", []);
 		if (this._value instanceof Promise) {
 			this._value = await this._value;
 		}
@@ -802,6 +904,7 @@ class ChainX {
 	}
 
 	catchAsync(handler) {
+		this._record("catchAsync", [handler]);
 		if (this._value instanceof Promise) {
 			this._value = this._value.catch((err) => {
 				this._error = err;
@@ -812,6 +915,7 @@ class ChainX {
 	}
 
 	finallyAsync(handler) {
+		this._record("finallyAsync", [handler]);
 		if (this._value instanceof Promise) {
 			this._value = this._value.finally(() => handler(this._value));
 		}
@@ -831,18 +935,22 @@ class ChainX {
 	}
 
 	addClass(className) {
+		this._record("addClass", [className]);
 		return this._applyToElements((el) => el.classList.add(className));
 	}
 
 	removeClass(className) {
+		this._record("removeClass", [className]);
 		return this._applyToElements((el) => el.classList.remove(className));
 	}
 
 	toggleClass(className) {
+		this._record("toggleClass", [className]);
 		return this._applyToElements((el) => el.classList.toggle(className));
 	}
 
 	addClassIf(cond, className) {
+		this._record("addClassIf", [cond, className]);
 		if (cond) {
 			this._applyToElements((el) => el.classList.add(className));
 		}
@@ -854,6 +962,7 @@ class ChainX {
 	}
 
 	html(content) {
+		this._record("html", [content]);
 		this._applyToElements((el) => (el.innerHTML = content));
 		return this;
 	}
@@ -863,6 +972,7 @@ class ChainX {
 	}
 
 	text(content) {
+		this._record("text", [content]);
 		this._applyToElements((el) => (el.textContent = content));
 		return this;
 	}
@@ -875,11 +985,13 @@ class ChainX {
 	}
 
 	attr(name, value) {
+		this._record("attr", [name, value]);
 		this._applyToElements((el) => el.setAttribute(name, value));
 		return this;
 	}
 
 	prop(name, value) {
+		this._record("prop", [name, value]);
 		if (value === undefined) {
 			return this._value instanceof Element ? this._value[name] : undefined;
 		}
@@ -890,6 +1002,7 @@ class ChainX {
 	}
 
 	css(styles) {
+		this._record("css", [styles]);
 		return this._applyToElements((el) => {
 			for (const [k, v] of Object.entries(styles)) {
 				el.style[k] = v;
@@ -898,16 +1011,19 @@ class ChainX {
 	}
 
 	on(event, handler) {
+		this._record("on", [event, handler]);
 		return this._applyToElements((el) => el.addEventListener(event, handler));
 	}
 
 	off(event, handler) {
+		this._record("off", [event, handler]);
 		return this._applyToElements((el) =>
 			el.removeEventListener(event, handler)
 		);
 	}
 
 	onHover(enterFn, leaveFn) {
+		this._record("onHover", [enterFn, leaveFn]);
 		return this._applyToElements((el) => {
 			el.addEventListener("mouseenter", enterFn);
 			el.addEventListener("mouseleave", leaveFn);
@@ -915,20 +1031,24 @@ class ChainX {
 	}
 
 	onScroll(fn) {
+		this._record("onScroll", [fn]);
 		return this._applyToElements((el) => {
 			window.addEventListener("scroll", () => fn(el));
 		});
 	}
 
 	show() {
+		this._record("show", []);
 		return this._applyToElements((el) => (el.style.display = ""));
 	}
 
 	hide() {
+		this._record("hide", []);
 		return this._applyToElements((el) => (el.style.display = "none"));
 	}
 
 	toggle() {
+		this._record("toggle", []);
 		return this._applyToElements((el) => {
 			const curr = window.getComputedStyle(el).display;
 			el.style.display = curr === "none" ? "" : "none";
@@ -936,10 +1056,12 @@ class ChainX {
 	}
 
 	remove() {
+		this._record("remove", []);
 		return this._applyToElements((el) => el.remove());
 	}
 
 	appendTo(target) {
+		this._record("appendTo", [target]);
 		const parent =
 			target instanceof Element ? target : document.querySelector(target);
 		return this._applyToElements((el) =>
@@ -948,6 +1070,7 @@ class ChainX {
 	}
 
 	prependTo(target) {
+		this._record("prependTo", [target]);
 		const parent =
 			target instanceof Element ? target : document.querySelector(target);
 		return this._applyToElements((el) =>
@@ -956,6 +1079,7 @@ class ChainX {
 	}
 
 	find(selector) {
+		this._record("find", [selector]);
 		if (this._value instanceof Element) {
 			this._value = this._value.querySelectorAll(selector);
 		}
@@ -970,6 +1094,7 @@ class ChainX {
 	}
 
 	val(value) {
+		this._record("val", [value]);
 		if (value !== undefined) {
 			this._applyToElements((el) => {
 				if ("value" in el) el.value = value;
@@ -979,6 +1104,7 @@ class ChainX {
 	}
 
 	scrollTo(x, y) {
+		this._record("scrollTo", [x, y]);
 		this._applyToElements((el) => {
 			el.scrollTo(x, y);
 		});
@@ -986,10 +1112,12 @@ class ChainX {
 	}
 
 	scrollIntoView(options = { behavior: "smooth", block: "start" }) {
+		this._record("scrollIntoView", [options]);
 		return this._applyToElements((el) => el.scrollIntoView(options));
 	}
 
 	parent() {
+		this._record("parent", []);
 		if (this._value instanceof Element) {
 			this._value = this._value.parentElement;
 		}
@@ -997,6 +1125,7 @@ class ChainX {
 	}
 
 	children() {
+		this._record("children", []);
 		if (this._value instanceof Element) {
 			this._value = this._value.children;
 		}
@@ -1004,6 +1133,7 @@ class ChainX {
 	}
 
 	closest(selector) {
+		this._record("closest", [selector]);
 		if (this._value instanceof Element) {
 			this._value = this._value.closest(selector);
 		}
@@ -1011,6 +1141,7 @@ class ChainX {
 	}
 
 	fadeIn(duration = 400) {
+		this._record("fadeIn", [duration]);
 		this._applyToElements((el) => {
 			el.style.opacity = 0;
 			el.style.display = "";
@@ -1023,6 +1154,7 @@ class ChainX {
 	}
 
 	fadeOut(duration = 400) {
+		this._record("fadeOut", [duration]);
 		this._applyToElements((el) => {
 			el.style.transition = `opacity ${duration}ms`;
 			el.style.opacity = 0;
@@ -1034,6 +1166,7 @@ class ChainX {
 	}
 
 	fadeToggle(duration = 400) {
+		this._record("fadeToggle", [duration]);
 		this._applyToElements((el) => {
 			const isHidden = window.getComputedStyle(el).display === "none";
 			if (isHidden) {
@@ -1046,6 +1179,7 @@ class ChainX {
 	}
 
 	slideDown(duration = 300) {
+		this._record("slideDown", [duration]);
 		this._applyToElements((el) => {
 			this._queue.push(() => this._slide(el, "down", duration));
 			this._dequeue();
@@ -1054,6 +1188,7 @@ class ChainX {
 	}
 
 	slideUp(duration = 300) {
+		this._record("slideUp", [duration]);
 		this._applyToElements((el) => {
 			this._queue.push(() => this._slide(el, "up", duration));
 			this._dequeue();
@@ -1062,6 +1197,7 @@ class ChainX {
 	}
 
 	slideToggle(duration = 300) {
+		this._record("slideToggle", [duration]);
 		this._applyToElements((el) => {
 			const isHidden = window.getComputedStyle(el).display === "none";
 			this._queue.push(() =>
@@ -1115,6 +1251,7 @@ class ChainX {
 	}
 
 	animate(styles, duration = 400) {
+		this._record("animate", [styles, duration]);
 		this._applyToElements((el) => {
 			el.style.transition = Object.keys(styles)
 				.map((key) => `${key} ${duration}ms ease`)
@@ -1129,6 +1266,7 @@ class ChainX {
 	}
 
 	typewriter(text, speed = 50) {
+		this._record("typewriter", [text, speed]);
 		this._applyToElements((el) => {
 			el.textContent = "";
 			let i = 0;
@@ -1144,6 +1282,7 @@ class ChainX {
 	}
 
 	loopAnimations(effects = [], delay = 1000) {
+		this._record("loopAnimations", [effects, delay]);
 		this._applyToElements((el) => {
 			let i = 0;
 			const run = () => {
@@ -1158,6 +1297,7 @@ class ChainX {
 	}
 
 	scrollReveal(threshold = 0.1, duration = 400) {
+		this._record("scrollReveal", [threshold, duration]);
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
@@ -1201,7 +1341,10 @@ class ChainX {
 	// 拡張（プラグイン）
 	static plugin(name, fn) {
 		if (!this.prototype[name]) {
-			this.prototype[name] = fn;
+			this.prototype[name] = function (...args) {
+				this._record(name, args);
+				return fn.apply(this, args);
+			};
 		}
 	}
 }

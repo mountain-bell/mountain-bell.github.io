@@ -1,10 +1,8 @@
-// test/test-all.js
-// ChainXの全機能をブラウザのグローバル $X を使って確認する
-
 function testChainX() {
 	console.log("=== 基本操作 ===");
 	$X([1, 2, 3])
 		.clone()
+		.log("clone")
 		.push(4)
 		.log("push")
 		.pop()
@@ -21,9 +19,11 @@ function testChainX() {
 	console.log("\n=== 型変換・判定 ===");
 	$X("123")
 		.toNumber()
+		.log("toNumber")
 		.toBoolean()
+		.log("toBoolean")
 		.type()
-		.log("type check")
+		.log("type")
 		.isNumber()
 		.log("isNumber")
 		.isType("number")
@@ -32,40 +32,65 @@ function testChainX() {
 	console.log("\n=== オブジェクト操作 ===");
 	$X({ a: 1, b: 2 })
 		.renameKeys({ a: "x" })
+		.log("renameKeys")
 		.defaults({ y: 3 })
+		.log("defaults")
 		.pick(["x"])
+		.log("pick")
 		.omit(["y"])
+		.log("omit")
 		.mapObject((k, v) => [k.toUpperCase(), v * 10])
+		.log("mapObject")
 		.filterObject((k, v) => v > 10)
-		.log("object ops");
+		.log("filterObject");
 
 	console.log("\n=== 配列ユーティリティ ===");
-	$X([1, 2, 3, 4, 5])
+	const baseArr = $X([1, 2, 3, 4, 5]);
+
+	baseArr
 		.filterMap((n) => (n % 2 ? n : null))
+		.log("filterMap")
 		.reject((n) => n === 3)
+		.log("reject")
 		.groupBy((n) => (n % 2 === 0 ? "even" : "odd"))
+		.log("groupBy");
+
+	baseArr
+		.reset()
 		.countBy((n) => typeof n)
+		.log("countBy")
 		.uniq()
+		.log("uniq")
 		.shuffle()
+		.log("shuffle")
 		.chunk(2)
+		.log("chunk")
 		.partition((n) => Array.isArray(n))
+		.log("partition")
 		.zip([9, 8, 7])
+		.log("zip")
 		.mapToObject((v, i) => [`key${i}`, v])
-		.pluck("key1") // 意味ないが呼び出し確認用
-		.range(0, 5)
+		.log("mapToObject")
+		.pluck("key1")
+		.log("pluck");
+
+	const rangeArr = $X().range(0, 5).log("range");
+	const rangeMapArr = $X()
 		.rangeMap(1, 3, (i) => i * 10)
-		.sum()
-		.avg()
-		.min()
-		.max()
-		.median()
-		.log("array ops");
+		.log("rangeMap");
+
+	rangeMapArr.clone().sum().log("sum");
+	rangeMapArr.clone().avg().log("avg");
+	rangeMapArr.clone().min().log("min");
+	rangeMapArr.clone().max().log("max");
+	rangeMapArr.clone().median().log("median");
 
 	console.log("\n=== 状態保存・復元 ===");
 	$X([10, 20, 30])
 		.saveState("before")
+		.log("saved")
 		.push(40)
-		.log("modified")
+		.log("after push")
 		.restoreState("before")
 		.log("restored");
 
@@ -76,6 +101,7 @@ function testChainX() {
 			(v) => v * 2,
 			(v) => v + 1
 		)
+		.log("pipe")
 		.breakIf((v) => v > 200)
 		.log("after breakIf")
 		.safe(() => {
@@ -110,28 +136,103 @@ function testChainX() {
 
 	$X(div)
 		.addClass("highlight")
+		.log("addClass")
 		.toggleClass("highlight")
+		.log("toggleClass")
 		.removeClass("highlight")
+		.log("removeClass")
 		.text("ChainX Updated!")
+		.log("text")
 		.html("<strong>Bold!</strong>")
+		.log("html")
 		.attr("data-test", "123")
+		.log("attr")
 		.prop("hidden", false)
-		.val("value") // if applicable
+		.log("prop")
+		.val("value")
+		.log("val")
 		.parent()
+		.log("parent")
 		.children()
+		.log("children")
 		.closest("body")
+		.log("closest")
 		.find(".test")
+		.log("find")
 		.scrollIntoView()
+		.log("scrollIntoView")
 		.scrollTo(0, 0)
+		.log("scrollTo")
 		.fadeIn(300)
+		.log("fadeIn")
 		.fadeOut(300)
+		.log("fadeOut")
 		.fadeToggle(300)
+		.log("fadeToggle")
 		.animate({ opacity: "1" }, 300)
+		.log("animate")
 		.typewriter("Typing test", 20)
+		.log("typewriter")
 		.loopAnimations([(x) => x.fadeIn(), (x) => x.fadeOut()], 1000)
-		.scrollReveal(0.1, 300);
+		.log("loopAnimations")
+		.scrollReveal(0.1, 300)
+		.log("scrollReveal");
 
-	console.log("=== ✅ すべての関数が呼び出されました（目視とログで確認） ===");
+	console.log("\n=== レシピ確認 ===");
+
+	const recipe1 = $X().startRecipe().push(5).push(6).pop().toRecipe();
+	recipe1($X([1, 2, 3])).log("Recipe1 applied");
+
+	const recipe2 = $X()
+		.startRecipe()
+		.tapIf(
+			(val) => typeof val === "string",
+			(val) => console.log("文字列スタート:", val)
+		)
+		.toNumber()
+		.pipe((n) => n * 10)
+		.toRecipe();
+	recipe2($X("42")).log("Recipe2 applied");
+
+	const recipe3 = $X()
+		.startRecipe()
+		.filterMap((n) => (n % 2 === 0 ? n : null))
+		.mapToObject((v, i) => [`even${i}`, v])
+		.toRecipe();
+	recipe3($X([1, 2, 3, 4, 5, 6])).log("Recipe3 applied");
+
+	const domRecipe = $X()
+		.startRecipe()
+		.addClass("highlight")
+		.css({ backgroundColor: "yellow", color: "red" })
+		.toRecipe();
+	const resipedDiv = document.createElement("div");
+	resipedDiv.className = "test-dom";
+	resipedDiv.textContent = "DOM for Recipe";
+	document.body.appendChild(resipedDiv);
+	domRecipe($X(resipedDiv)).log("DOM Recipe applied");
+
+	const asyncRecipe = $X()
+		.startRecipe()
+		.tapAsync(async (v) => {
+			await new Promise((r) => setTimeout(r, 100));
+			console.log("tapAsync in recipe:", v);
+			return v;
+		})
+		.pipeAsync(async (v) => {
+			await new Promise((r) => setTimeout(r, 100));
+			return v + "-done";
+		})
+		.toRecipe();
+
+	asyncRecipe($X(Promise.resolve("start")))
+		.tapAsync((res) => console.log("asyncRecipe result:", res))
+		.toPromise()
+		.then((finalRes) => console.log("Final async recipe output:", finalRes));
+
+	console.log(
+		"\n=== ✅ すべての関数が呼び出されました（目視とログで確認） ==="
+	);
 }
 
 window.addEventListener("DOMContentLoaded", testChainX);
