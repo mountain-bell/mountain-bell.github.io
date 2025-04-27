@@ -136,6 +136,62 @@ $X([1, 2, 3]).push(4).saveState("with4").reset().restoreState("with4").log();
 
 ---
 
+## 🔹 レシピ作成・適用
+
+- `.startRecipe()`：レシピ記録開始
+- `.toRecipe()`：レシピ関数を作成
+- `.applyRecipe(recipeFn)`：レシピを適用する
+
+### レシピとは？
+
+操作チェーンをあらかじめ記録し、  
+**あとから別のインスタンスに再適用できる**仕組みです！
+
+```js
+// レシピを作成
+const recipe = $X().startRecipe().push(4).uniq().toRecipe();
+
+// 使い回しできる！
+recipe($X([1, 2, 2, 3])).log(); // => [1,2,3,4]
+recipe($X([5, 5, 6])).log(); // => [5,6,4]
+```
+
+---
+
+### ⚠️ 非同期レシピ作成時の注意
+
+レシピに `.tapAsync()`, `.pipeAsync()` など**非同期メソッドを含める場合**、  
+以下 2 点に注意してください：
+
+1. **レシピ適用後に `.toPromise()` で Promise として完了させる**
+2. **レシピ適用時、`$X(Promise)` を渡してスタートする**
+
+```js
+// 非同期レシピ
+const asyncRecipe = $X()
+	.startRecipe()
+	.tapAsync(async (v) => {
+		await new Promise((r) => setTimeout(r, 100));
+		console.log("tapAsync in recipe:", v);
+		return v;
+	})
+	.pipeAsync(async (v) => {
+		await new Promise((r) => setTimeout(r, 100));
+		return v + "-done";
+	})
+	.toRecipe();
+
+// ✅ Promiseを渡してからレシピ適用！
+asyncRecipe($X(Promise.resolve("start")))
+	.toPromise()
+	.then((res) => console.log("Final result:", res));
+```
+
+> ℹ️ 非同期レシピでは、最初から Promise を `$X()` に渡すことで  
+> tapAsync や pipeAsync などが正しく「待ち受け」できるようになります。
+
+---
+
 ## 🔹 プラグイン拡張
 
 - `ChainX.plugin(name, fn)`：独自メソッドを追加

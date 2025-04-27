@@ -56,19 +56,56 @@ $X([1, 2, 3]).push(4).uniq().log();
 $X({ a: 1 }).renameKeys({ a: "x" }).log();
 ```
 
-### DOM
+### DOM 操作
 
 ```js
 $X("#myDiv").text("Hello!").fadeIn();
 ```
 
-### 非同期
+### 非同期操作
 
 ```js
 $X([1, 2, 3])
 	.mapAsync(async (n) => n * 2)
 	.tapAsync((res) => console.log(res));
 ```
+
+---
+
+## レシピ（操作の記録と再利用）
+
+よく使う一連の操作を「レシピ」としてまとめ、簡単に再利用できます。
+
+```js
+// レシピを作成
+const recipe = $X().startRecipe().push(5).push(6).pop().toRecipe();
+
+// レシピを適用
+recipe($X([1, 2, 3])).log();
+```
+
+**非同期や DOM 操作を含むレシピ**も作成可能です。
+
+```js
+const asyncRecipe = $X()
+	.startRecipe()
+	.tapAsync(async (val) => {
+		await new Promise((r) => setTimeout(r, 100));
+		console.log("値:", val);
+		return val;
+	})
+	.pipeAsync(async (val) => {
+		await new Promise((r) => setTimeout(r, 100));
+		return val + "-done";
+	})
+	.toRecipe();
+
+asyncRecipe($X(Promise.resolve("start")))
+	.tapAsync((res) => console.log("最終結果:", res))
+	.toPromise();
+```
+
+> 🛡️ **注意:** 非同期レシピは Promise を安全に扱えるよう意識して作成してください！
 
 ---
 
@@ -79,8 +116,9 @@ $X([1, 2, 3])
 - データ操作: `.clone()`, `.mergeDeep()`, `.pick()`
 - 配列ユーティリティ: `.groupBy()`, `.compact()`, `.shuffle()`
 - エラー処理: `.safe()`, `.fallback()`, `.retry()`
-- DOM: `.addClass()`, `.fadeToggle()`, `.slideUp()`, `.scrollReveal()`
-- 非同期: `.tapAsync()`, `.mapAsync()`, `.await()`
+- DOM 操作: `.addClass()`, `.fadeToggle()`, `.slideUp()`, `.scrollReveal()`
+- 非同期操作: `.tapAsync()`, `.mapAsync()`, `.await()`
+- レシピ機能: `.startRecipe()` → `.toRecipe()` → 再利用可能！
 - 独自拡張: `ChainX.plugin()`
 - 状態保存: `.saveState()`, `.restoreState()`
 
