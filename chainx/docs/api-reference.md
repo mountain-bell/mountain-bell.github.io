@@ -78,17 +78,17 @@ $X("#box").addClass("visible").fadeIn();
 
 ---
 
-## 🔹 非同期処理
+## 🔹 チェーン制御
 
-- `.tapAsync(fn)`, `.mapAsync(fn)`, `.forEachAsync(fn)`
-- `.pipeAsync(...fns)`, `.retryAsync(fn, times, delay)`
-- `.timeout(ms)`, `.wait(ms)`, `.await()`, `.toPromise()`
-- `.catchAsync(handler)`, `.finallyAsync(handler)`
+- `.tap(fn)` / `.tapIf(conditionFn, tapFn)`：中間で処理を挟む
+- `.pipe(...fns)`：関数合成
+- `.breakIf(conditionFn)`：条件を満たしたらチェーン停止
 
 ```js
-$X([1, 2, 3])
-	.mapAsync(async (n) => n * 2)
-	.tapAsync(console.log);
+$X(10)
+	.tap((n) => console.log("中間", n))
+	.pipe((x) => x * 2)
+	.log();
 ```
 
 ---
@@ -110,17 +110,17 @@ $X([1, 2, 3])
 
 ---
 
-## 🔹 チェーン制御
+## 🔹 非同期処理
 
-- `.tap(fn)` / `.tapIf(conditionFn, tapFn)`：中間で処理を挟む
-- `.pipe(...fns)`：関数合成
-- `.breakIf(conditionFn)`：条件を満たしたらチェーン停止
+- `.tapAsync(fn)`, `.mapAsync(fn)`, `.forEachAsync(fn)`
+- `.pipeAsync(...fns)`, `.retryAsync(fn, times, delay)`
+- `.timeout(ms)`, `.wait(ms)`, `.await()`, `.toPromise()`
+- `.catchAsync(handler)`, `.finallyAsync(handler)`
 
 ```js
-$X(10)
-	.tap((n) => console.log("中間", n))
-	.pipe((x) => x * 2)
-	.log();
+$X([1, 2, 3])
+	.mapAsync(async (n) => n * 2)
+	.tapAsync(console.log);
 ```
 
 ---
