@@ -216,6 +216,20 @@ class ChainX {
 		return this;
 	}
 
+	exists() {
+		this._record("exists", []);
+		if (this._value instanceof Element) {
+			this._value = document.body.contains(this._value);
+		} else if (this._value instanceof NodeList || Array.isArray(this._value)) {
+			this._value = Array.from(this._value).some(
+				(el) => el instanceof Node && document.body.contains(el)
+			);
+		} else {
+			this._value = false;
+		}
+		return this;
+	}
+
 	// 🔹🔹🔹 配列操作 🔹🔹🔹
 
 	push(...items) {
@@ -355,6 +369,20 @@ class ChainX {
 		return this;
 	}
 
+	distinctBy(fn) {
+		this._record("distinctBy", [fn]);
+		if (Array.isArray(this._value)) {
+			const seen = new Set();
+			this._value = this._value.filter((item) => {
+				const key = fn(item);
+				if (seen.has(key)) return false;
+				seen.add(key);
+				return true;
+			});
+		}
+		return this;
+	}
+
 	compact() {
 		this._record("compact", []);
 		if (Array.isArray(this._value)) {
@@ -470,6 +498,14 @@ class ChainX {
 				this._value[i],
 				...arrays.map((a) => a[i]),
 			]);
+		}
+		return this;
+	}
+
+	flatten() {
+		this._record("flatten", []);
+		if (Array.isArray(this._value)) {
+			this._value = this._value.flat(Infinity);
 		}
 		return this;
 	}
@@ -1065,7 +1101,19 @@ class ChainX {
 	tapIf(condFn, tapFn) {
 		this._record("tapIf", [condFn, tapFn]);
 		if (condFn(this._value)) {
-			tapFn(this._value);
+			tapFn(new ChainX(this._value));
+		}
+		return this;
+	}
+
+	branch(condFn, trueFn, falseFn) {
+		this._record("branch", [condFn, trueFn, falseFn]);
+		if (condFn(this._value)) {
+			const result = trueFn(new ChainX(this._value));
+			this._value = result instanceof ChainX ? result._value : result;
+		} else if (falseFn) {
+			const result = falseFn(new ChainX(this._value));
+			this._value = result instanceof ChainX ? result._value : result;
 		}
 		return this;
 	}
@@ -1082,6 +1130,14 @@ class ChainX {
 		this._record("breakIf", [condFn]);
 		if (condFn(this._value)) {
 			this._value = undefined;
+		}
+		return this;
+	}
+
+	throwIf(condFn, message = "Validation failed") {
+		this._record("throwIf", [condFn, message]);
+		if (condFn(this._value)) {
+			throw new Error(message);
 		}
 		return this;
 	}

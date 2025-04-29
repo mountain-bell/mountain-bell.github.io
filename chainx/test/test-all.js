@@ -198,7 +198,7 @@ function testChainX() {
 		.startRecipe()
 		.tapIf(
 			(val) => typeof val === "string",
-			(val) => console.log("文字列スタート:", val)
+			(x) => console.log("文字列スタート:", x._value)
 		)
 		.toNumber()
 		.pipe((n) => n * 10)
