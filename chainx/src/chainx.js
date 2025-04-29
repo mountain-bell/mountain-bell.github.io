@@ -11,6 +11,7 @@ class ChainX {
 		this._recordedSteps = [];
 		this._recording = false;
 		this._queue = [];
+		this._dequeueing = false;
 		this._error = null;
 		this._saveStates = {};
 	}
@@ -40,11 +41,26 @@ class ChainX {
 		return this;
 	}
 
-	_slide(target, direction = "down", duration = 300) {
+	_dequeue() {
+		if (this._queue.length === 0 || this._dequeueing) return;
+		this._dequeueing = true;
+		const next = this._queue.shift();
+		if (typeof next === "function") {
+			Promise.resolve().then(() => {
+				next();
+				this._dequeueing = false;
+				this._dequeue();
+			});
+		} else {
+			this._dequeueing = false;
+		}
+	}
+
+	_slide(target, direction, duration, easing) {
 		const el = target;
 		if (!(el instanceof Element)) return;
 		el.style.overflow = "hidden";
-		el.style.transition = `max-height ${duration}ms ease`;
+		el.style.transition = `max-height ${duration}ms ${easing}`;
 		const cleanUp = () => {
 			el.style.transition = "";
 			el.style.overflow = "";
@@ -140,11 +156,9 @@ class ChainX {
 	}
 
 	isType(typeName) {
-		const actual = Object.prototype.toString
-			.call(this._value)
-			.slice(8, -1)
-			.toLowerCase();
-		this._value = actual === typeName.toLowerCase();
+		const v = this._value;
+		const t = Object.prototype.toString.call(v).slice(8, -1).toLowerCase();
+		this._value = t === typeName.toLowerCase();
 		return this;
 	}
 
@@ -554,16 +568,16 @@ class ChainX {
 		return this;
 	}
 
-	deepClone() {
-		const deepCloneHelper = (obj) => {
-			if (Array.isArray(obj)) return obj.map(deepCloneHelper);
+	cloneDeep() {
+		const cloneDeepHelper = (obj) => {
+			if (Array.isArray(obj)) return obj.map(cloneDeepHelper);
 			if (obj && typeof obj === "object")
 				return Object.fromEntries(
-					Object.entries(obj).map(([k, v]) => [k, deepCloneHelper(v)])
+					Object.entries(obj).map(([k, v]) => [k, cloneDeepHelper(v)])
 				);
 			return obj;
 		};
-		this._value = deepCloneHelper(this._value);
+		this._value = cloneDeepHelper(this._value);
 		return this;
 	}
 
@@ -888,12 +902,12 @@ class ChainX {
 		return this._applyToElements((el) => el.scrollIntoView(options));
 	}
 
-	fadeIn(duration = 400) {
-		this._record("fadeIn", [duration]);
+	fadeIn(duration = 400, easing = "ease") {
+		this._record("fadeIn", [duration, easing]);
 		this._applyToElements((el) => {
 			el.style.opacity = 0;
 			el.style.display = "";
-			el.style.transition = `opacity ${duration}ms`;
+			el.style.transition = `opacity ${duration}ms ${easing}`;
 			requestAnimationFrame(() => {
 				el.style.opacity = 1;
 			});
@@ -901,10 +915,10 @@ class ChainX {
 		return this;
 	}
 
-	fadeOut(duration = 400) {
-		this._record("fadeOut", [duration]);
+	fadeOut(duration = 400, easing = "ease") {
+		this._record("fadeOut", [duration, easing]);
 		this._applyToElements((el) => {
-			el.style.transition = `opacity ${duration}ms`;
+			el.style.transition = `opacity ${duration}ms ${easing}`;
 			el.style.opacity = 0;
 			setTimeout(() => {
 				el.style.display = "none";
@@ -913,54 +927,65 @@ class ChainX {
 		return this;
 	}
 
-	fadeToggle(duration = 400) {
-		this._record("fadeToggle", [duration]);
+	fadeToggle(duration = 400, easing = "ease") {
+		this._record("fadeToggle", [duration, easing]);
 		this._applyToElements((el) => {
 			const isHidden = window.getComputedStyle(el).display === "none";
+			el.style.transition = `opacity ${duration}ms ${easing}`;
 			if (isHidden) {
-				this.fadeIn(duration);
+				el.style.opacity = 0;
+				el.style.display = "";
+				requestAnimationFrame(() => {
+					el.style.opacity = 1;
+				});
 			} else {
-				this.fadeOut(duration);
+				el.style.opacity = 1;
+				requestAnimationFrame(() => {
+					el.style.opacity = 0;
+					setTimeout(() => {
+						el.style.display = "none";
+					}, duration);
+				});
 			}
 		});
 		return this;
 	}
 
-	slideDown(duration = 300) {
-		this._record("slideDown", [duration]);
+	slideDown(duration = 300, easing = "ease") {
+		this._record("slideDown", [duration, easing]);
 		this._applyToElements((el) => {
-			this._queue.push(() => this._slide(el, "down", duration));
+			this._queue.push(() => this._slide(el, "down", duration, easing));
 			this._dequeue();
 		});
 		return this;
 	}
 
-	slideUp(duration = 300) {
-		this._record("slideUp", [duration]);
+	slideUp(duration = 300, easing = "ease") {
+		this._record("slideUp", [duration, easing]);
 		this._applyToElements((el) => {
-			this._queue.push(() => this._slide(el, "up", duration));
+			this._queue.push(() => this._slide(el, "up", duration, easing));
 			this._dequeue();
 		});
 		return this;
 	}
 
-	slideToggle(duration = 300) {
-		this._record("slideToggle", [duration]);
+	slideToggle(duration = 300, easing = "ease") {
+		this._record("slideToggle", [duration, easing]);
 		this._applyToElements((el) => {
 			const isHidden = window.getComputedStyle(el).display === "none";
 			this._queue.push(() =>
-				this._slide(el, isHidden ? "down" : "up", duration)
+				this._slide(el, isHidden ? "down" : "up", duration, easing)
 			);
 			this._dequeue();
 		});
 		return this;
 	}
 
-	animate(styles, duration = 400) {
-		this._record("animate", [styles, duration]);
+	animate(styles, duration = 400, easing = "ease") {
+		this._record("animate", [styles, duration, easing]);
 		this._applyToElements((el) => {
 			el.style.transition = Object.keys(styles)
-				.map((key) => `${key} ${duration}ms ease`)
+				.map((key) => `${key} ${duration}ms ${easing}`)
 				.join(", ");
 			requestAnimationFrame(() => {
 				for (const [key, value] of Object.entries(styles)) {
@@ -1002,15 +1027,15 @@ class ChainX {
 		return this;
 	}
 
-	scrollReveal(threshold = 0.1, duration = 400) {
-		this._record("scrollReveal", [threshold, duration]);
+	scrollReveal(threshold = 0.1, duration = 400, easing = "ease") {
+		this._record("scrollReveal", [threshold, duration, easing]);
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
 					if (entry.isIntersecting) {
 						const el = entry.target;
 						el.style.opacity = 0;
-						el.style.transition = `opacity ${duration}ms ease`;
+						el.style.transition = `opacity ${duration}ms ${easing}`;
 						el.style.display = "";
 						requestAnimationFrame(() => {
 							el.style.opacity = 1;
@@ -1194,7 +1219,6 @@ class ChainX {
 		const arr = this._value;
 		let i = 0;
 		const results = [];
-
 		const next = () => {
 			if (i >= arr.length) return Promise.resolve();
 			const index = i++;
@@ -1203,9 +1227,7 @@ class ChainX {
 				return next();
 			});
 		};
-
 		const runners = Array.from({ length: limit }, () => next());
-
 		this._value = Promise.all(runners).then(() => results);
 		return this;
 	}
@@ -1233,7 +1255,6 @@ class ChainX {
 		this._record("retryAsync", [fn, times, delay]);
 		this._error = null;
 		let attempt = 0;
-
 		const run = async () => {
 			while (attempt <= times) {
 				try {
@@ -1250,7 +1271,32 @@ class ChainX {
 			}
 			return this;
 		};
+		this._value = run();
+		return this;
+	}
 
+	retryTimeoutAsync(fn, timeoutMs, delay = 0) {
+		this._record("retryTimeoutAsync", [fn, timeoutMs, delay]);
+		this._error = null;
+		const start = Date.now();
+		const run = async () => {
+			while (true) {
+				try {
+					const result = await fn(this._value);
+					this._value = result;
+					this._error = null;
+					return this;
+				} catch (e) {
+					this._error = e;
+					if (Date.now() - start > timeoutMs) {
+						throw new Error("Timeout exceeded");
+					}
+					if (delay > 0) {
+						await new Promise((resolve) => setTimeout(resolve, delay));
+					}
+				}
+			}
+		};
 		this._value = run();
 		return this;
 	}

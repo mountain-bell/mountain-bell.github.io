@@ -46,7 +46,6 @@ function testChainX() {
 
 	console.log("\n=== 配列ユーティリティ ===");
 	const baseArr = $X([1, 2, 3, 4, 5]);
-
 	baseArr
 		.filterMap((n) => (n % 2 ? n : null))
 		.log("filterMap")
@@ -127,6 +126,18 @@ function testChainX() {
 		.finallyAsync(() => console.log("done"))
 		.toPromise()
 		.then((res) => console.log("toPromise:", res));
+
+	$X(Promise.reject(new Error("fail")))
+		.retryTimeoutAsync(
+			async (v) => {
+				if (!v) throw new Error("retryTimeout test error");
+				return "recovered";
+			},
+			1000,
+			100
+		)
+		.catchAsync((e) => console.error("retryTimeoutAsync failed:", e.message))
+		.finallyAsync(() => console.log("retryTimeoutAsync test done"));
 
 	console.log("\n=== DOM操作 ===");
 	const div = document.createElement("div");
@@ -226,7 +237,10 @@ function testChainX() {
 		.toRecipe();
 
 	asyncRecipe($X(Promise.resolve("start")))
-		.tapAsync((res) => console.log("asyncRecipe result:", res))
+		.tapAsync((res) => {
+			console.log("asyncRecipe result:", res);
+			return res;
+		})
 		.toPromise()
 		.then((finalRes) => console.log("Final async recipe output:", finalRes));
 

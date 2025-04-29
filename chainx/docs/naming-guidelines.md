@@ -66,7 +66,7 @@ DOM に関するメソッドは**破壊的（画面に直接作用）**である
 | 集約             | `sum`, `avg`, `min`, `max`, `median`       |
 | 分割構造         | `chunk`, `partition`, `groupBy`, `countBy` |
 | 取り出し/除外    | `pick`, `omit`, `pluck`                    |
-| クローン系       | `clone`, `cloneShallow`, `deepClone`       |
+| クローン系       | `clone`, `cloneShallow`, `cloneDeep`       |
 
 ### 備考
 
@@ -167,7 +167,7 @@ Promise ベースの非同期処理を扱うメソッド群。API 通信や遅�
 | -------- | ------------------------------------ |
 | 中間処理 | `tap`, `tapIf`, `pipe`               |
 | 条件制御 | `breakIf`, `ensure`                  |
-| クローン | `clone`, `cloneShallow`, `deepClone` |
+| クローン | `clone`, `cloneShallow`, `cloneDeep` |
 
 ### 備考
 
