@@ -2,9 +2,9 @@
 
 > モダン時代のチェーン型 JavaScript ユーティリティライブラリ
 
-ChainX は、配列やオブジェクト、DOM、非同期処理までを「非破壊」で継続的に操作できる JavaScript ライブラリです。
+ChainX は、配列・オブジェクト・DOM・非同期処理まで、モダン JavaScript で直感的かつ「非破壊」でチェーン操作できる統合ライブラリです。
 
-jQuery に近い使い心地を持ちながらも、現代的な DOM/データ/非同期に完全対応。
+jQuery のようにシンプルに書けつつ、現代的な非同期・型判定・エラー処理など幅広く対応します。
 
 ---
 
@@ -22,23 +22,26 @@ jQuery に近い使い心地を持ちながらも、現代的な DOM/データ/�
 <script src="./src/chainx.js"></script>
 ```
 
-または（モジュールとして使う場合）:
+またはモジュールとして：
 
 ```js
 import { ChainX, $X } from "./src/chainx.js";
 ```
 
-### 🔄 モジュールとして使いたい場合
+**モジュールモードで使用する場合**は、`chainx.js` 内末尾コメントの `export` 部分をアンコメントしてください。
 
-`chainx.js` は通常 `<script>` タグでグローバルに `$X()` を定義する形式ですが、  
-**モジュールとして `import` したい場合は、末尾のコメントを有効化**してください：
+---
 
-```js
-// export { ChainX, $X };
-```
+## 特徴
 
-> ⚠️ コメントを外すと `<script>` タグでの読み込みでは動かなくなります。  
-> 必要に応じて、環境に合わせて切り替えてください。
+- **配列・オブジェクト操作**: `.map()`, `.filter()`, `.mergeDeep()`, `.defaults()`
+- **非破壊・チェーン型**: 値を安全に連続処理
+- **DOM 操作**: `.addClass()`, `.text()`, `.html()`, `.css()`, アニメーション対応
+- **非同期制御**: `.mapAsync()`, `.retryAsync()`, `.tapAsync()`, `.pipeAsync()`
+- **エラー処理**: `.attempt()`, `.onCatch()`, `.fallback()`, `.retry()`
+- **状態保存/復元**: `.saveState()`, `.restoreState()`
+- **レシピ機能**: 操作の記録と再利用
+- **プラグイン拡張**: `ChainX.plugin()` で機能追加
 
 ---
 
@@ -47,19 +50,26 @@ import { ChainX, $X } from "./src/chainx.js";
 ### 配列操作
 
 ```js
-$X([1, 2, 3]).push(4).uniq().log();
+$X([1, 2, 3])
+	.push(4)
+	.uniq()
+	.map((n) => n * 2)
+	.log();
 ```
 
 ### オブジェクト操作
 
 ```js
-$X({ a: 1 }).renameKeys({ a: "x" }).log();
+$X({ a: 1, b: 2 }).renameKeys({ a: "x" }).mergeDeep({ c: 3 }).log();
 ```
 
 ### DOM 操作
 
 ```js
-$X("#myDiv").text("Hello!").fadeIn();
+$X("#myDiv")
+	.addClass("active")
+	.text("更新完了")
+	.animate({ opacity: "0.5" }, 500);
 ```
 
 ### 非同期操作
@@ -67,60 +77,20 @@ $X("#myDiv").text("Hello!").fadeIn();
 ```js
 $X([1, 2, 3])
 	.mapAsync(async (n) => n * 2)
-	.tapAsync((res) => console.log(res));
+	.tapAsync((res) => console.log("結果", res));
 ```
 
 ---
 
 ## レシピ（操作の記録と再利用）
 
-よく使う一連の操作を「レシピ」としてまとめ、簡単に再利用できます。
+一連の処理をレシピ化し再利用できます。
 
 ```js
-// レシピを作成
-const recipe = $X().startRecipe().push(5).push(6).pop().toRecipe();
+const recipe = $XR([1, 2]).push(3).toRecipe();
 
-// レシピを適用
-recipe($X([1, 2, 3])).log();
+recipe($X([10, 20])).log();
 ```
-
-**非同期や DOM 操作を含むレシピ**も作成可能です。
-
-```js
-const asyncRecipe = $X()
-	.startRecipe()
-	.tapAsync(async (val) => {
-		await new Promise((r) => setTimeout(r, 100));
-		console.log("値:", val);
-		return val;
-	})
-	.pipeAsync(async (val) => {
-		await new Promise((r) => setTimeout(r, 100));
-		return val + "-done";
-	})
-	.toRecipe();
-
-asyncRecipe($X(Promise.resolve("start")))
-	.tapAsync((res) => console.log("最終結果:", res))
-	.toPromise();
-```
-
-> 🛡️ **注意:** 非同期レシピは Promise を安全に扱えるよう意識して作成してください！
-
----
-
-## 特徴
-
-- 非破壊型: 元の値を保ったまま操作
-- 型判定: `.isArray()`, `.type()` など
-- データ操作: `.clone()`, `.mergeDeep()`, `.pick()`
-- 配列ユーティリティ: `.groupBy()`, `.compact()`, `.shuffle()`
-- エラー処理: `.safe()`, `.fallback()`, `.retry()`
-- DOM 操作: `.addClass()`, `.fadeToggle()`, `.slideUp()`, `.scrollReveal()`
-- 非同期操作: `.tapAsync()`, `.mapAsync()`, `.await()`
-- レシピ機能: `.startRecipe()` → `.toRecipe()` → 再利用可能！
-- 独自拡張: `ChainX.plugin()`
-- 状態保存: `.saveState()`, `.restoreState()`
 
 ---
 
