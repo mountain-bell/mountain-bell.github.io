@@ -1,0 +1,29 @@
+{
+	"name": "mountain-bell.github.io",
+	"version": "1.0.0",
+	"private": true,
+	"workspaces": [
+		"sample"
+	],
+	"devDependencies": {
+		"typescript": "^5.9.2",
+		"esbuild": "^0.25.9"
+	},
+	"scripts": {
+		"build": "npm run build --ws --if-present",
+		"dev": "npm run dev --ws --if-present",
+		"build:sample": "npm run -w sample build",
+		"dev:sample": "npm run -w sample dev"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mountain-bell/mountain-bell.github.io.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/mountain-bell/mountain-bell.github.io/issues"
+	},
+	"homepage": "https://github.com/mountain-bell/mountain-bell.github.io#readme"
+}

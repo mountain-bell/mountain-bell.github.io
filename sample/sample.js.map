@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/index.ts"],
+  "sourcesContent": ["const userName = \"MB\";\r\n\r\nfunction greet(name: string) {\r\n\treturn `Hello, World! Hello, ${name}!`;\r\n}\r\n\r\nconsole.log(greet(userName));\r\n"],
+  "mappings": ";;;AAAA,MAAM,WAAW;AAEjB,WAAS,MAAM,MAAc;AAC5B,WAAO,wBAAwB,IAAI;AAAA,EACpC;AAEA,UAAQ,IAAI,MAAM,QAAQ,CAAC;",
+  "names": []
+}

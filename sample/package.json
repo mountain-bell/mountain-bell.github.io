@@ -1,0 +1,22 @@
+{
+	"name": "@mountain-bell/sample",
+	"version": "0.1.0",
+	"type": "module",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./types/index.d.ts",
+	"files": [
+		"dist",
+		"types"
+	],
+	"sideEffects": false,
+	"scripts": {
+		"build:ts": "tsc -p tsconfig.json",
+		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=Sample --outfile=sample.js --sourcemap --minify",
+		"build": "npm run build:ts && npm run build:browser",
+		"dev:ts": "tsc -p tsconfig.json -w",
+		"dev:browser": "esbuild src/index.ts --bundle --format=iife --global-name=Sample --outfile=sample.js --sourcemap --watch",
+		"dev": "npm run dev:browser",
+		"prepublishOnly": "npm run build"
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "ES2020", // 出力されるJSのバージョン（モダンブラウザ向けを指定）
+		"module": "ESNext", // 出力するモジュール形式
+		"rootDir": "./src", // TypeScriptの入力元ディレクトリ
+		"outDir": "./dist", // 出力先ディレクトリ（.js）
+		"declaration": true, // 型定義ファイル（.d.ts）の出力
+		"declarationDir": "./types", // 出力先ディレクトリ（.d.ts）
+		"sourceMap": true, // ソースマップを出力（デバッグで .ts を直接確認できる）
+		"strict": true, // 厳格モードを有効化（型安全）
+		"moduleResolution": "bundler", // import解決（vite/esbuild/webpackを前提に指定）
+		"lib": ["ES2020", "DOM"], // 使用する標準ライブラリを指定
+		"noUnusedLocals": true, // 不要な変数を検知
+		"noUnusedParameters": true, // 未使用の引数を検知
+		"noImplicitReturns": true, // 関数の return が抜けていないか検知
+		"removeComments": true, // (任意) JS出力からコメント削除
+		"esModuleInterop": true, // (任意) CJSモジュールをimport文で扱いやすくする
+		"skipLibCheck": true // (任意) 外部型定義のチェックをスキップしてビルド高速化
+	},
+	"include": ["src"]
+}
+
+// 実行コマンド
+// npx tsc -p sample （お試しコンパイル：TypeScriptを直接コンパイル）
+// npm run build:sample （正式ビルド：npm公開用のindex.jsとindex.d.ts、さらにgit公開用のsample.jsを生成）
+// npm run dev:sample （開発用のwatchモード：git公開用のsample.jsのみ自動生成）
