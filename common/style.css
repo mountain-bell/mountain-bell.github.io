@@ -71,6 +71,15 @@ footer {
 	font-weight: bold;
 }
 
+.contact_information a {
+	color: #cce4ff;
+	text-decoration: none;
+}
+
+.contact_information a:hover {
+	text-decoration: underline;
+}
+
 h1 {
 	background: transparent;
 	border-bottom: solid 4px #cce4ff;

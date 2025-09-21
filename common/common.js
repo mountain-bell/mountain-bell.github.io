@@ -76,7 +76,7 @@
 		function setFooter() {
 			$("footer").append(
 				`<div class="contact_information">
-					お問い合わせ ➡ https://twitter.com/mountain_bell
+					お問い合わせ ➡ <a href="https://x.com/mountain_bell" target="_blank">https://x.com/mountain_bell</a>
 				</div>`
 			);
 		}
