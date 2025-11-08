@@ -1,3 +1,5 @@
 node_modules
 sample/dist
 sample/types
+dom-trigger/dist
+dom-trigger/types
