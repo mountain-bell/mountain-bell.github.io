@@ -13,15 +13,37 @@ export function getTriggerNames(el: Element, prefix: string): string[] {
 	return names;
 }
 
+const cache = new WeakMap<Element, Map<string, Record<string, unknown>>>();
+
 export function collectData(
 	el: Element,
 	name: string
 ): Record<string, unknown> {
-	const raw = el.getAttribute(`data-${name}`);
-	if (!raw) return {};
-	try {
-		return JSON.parse(raw);
-	} catch {
-		throw new Error(`[DomTrigger] Invalid JSON in data-${name}: ${raw}`);
+	const uncacheAttr = `data-uncache-${name}`;
+	const shouldCache = !el.hasAttribute(uncacheAttr);
+
+	if (shouldCache) {
+		const inner = cache.get(el);
+		const cached = inner?.get(name);
+		if (cached) return cached;
 	}
+
+	const targetAttr = shouldCache ? `data-${name}` : uncacheAttr;
+	const raw = el.getAttribute(targetAttr);
+	if (!raw) return {};
+
+	let parsed: Record<string, unknown>;
+	try {
+		parsed = JSON.parse(raw);
+	} catch {
+		throw new Error(`[DomTrigger] Invalid JSON in ${targetAttr}: ${raw}`);
+	}
+
+	if (shouldCache) {
+		const inner = cache.get(el) ?? new Map();
+		inner.set(name, parsed);
+		cache.set(el, inner);
+	}
+
+	return parsed;
 }
