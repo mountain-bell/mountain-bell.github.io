@@ -12,41 +12,51 @@ type DomEventName =
 	| keyof WindowEventMap;
 
 const EVENT_PREFIX_MAP: Partial<Record<DomEventName, string>> = {
-	// --- ユーザー操作（クリック・フォームなど） ---
+	// --- クリック ---
 	click: `${JS_PREFIX}click-`,
+	// --- フォーム ---
 	submit: `${JS_PREFIX}submit-`,
 	change: `${JS_PREFIX}change-`,
 	input: `${JS_PREFIX}input-`,
-	// --- キーボード ---
-	keydown: `${JS_PREFIX}keydown-`,
-	keyup: `${JS_PREFIX}keyup-`,
 	// --- フォーカス ---
 	focusin: `${JS_PREFIX}focusin-`,
 	focusout: `${JS_PREFIX}focusout-`,
-	// --- ポインター／マウス ---
+	// --- ポインター ---
 	pointerdown: `${JS_PREFIX}pointerdown-`,
+	pointermove: `${JS_PREFIX}pointermove-`,
 	pointerup: `${JS_PREFIX}pointerup-`,
-	mouseover: `${JS_PREFIX}mouseover-`,
-	mouseout: `${JS_PREFIX}mouseout-`,
-	// --- メディア関連 ---
-	play: `${JS_PREFIX}play-`,
-	pause: `${JS_PREFIX}pause-`,
-	ended: `${JS_PREFIX}ended-`,
-	// --- トランジション／アニメーション ---
+	pointercancel: `${JS_PREFIX}pointercancel-`,
+	// --- アニメーション ---
 	transitionend: `${JS_PREFIX}transitionend-`,
 	animationend: `${JS_PREFIX}animationend-`,
-	// --- ページ状態 ---
+	// --- ページ ---
 	visibilitychange: `${JS_PREFIX}visibilitychange-`,
 	pageshow: `${JS_PREFIX}pageshow-`,
 	pagehide: `${JS_PREFIX}pagehide-`,
-	// --- ネットワーク／クリップボード ---
+	// --- ネットワーク ---
 	online: `${JS_PREFIX}online-`,
 	offline: `${JS_PREFIX}offline-`,
+	// --- クリップボード ---
 	copy: `${JS_PREFIX}copy-`,
 	paste: `${JS_PREFIX}paste-`,
+	// --- キーボード（クリック補助・PC向け） ---
+	keydown: `${JS_PREFIX}keydown-`,
+	keyup: `${JS_PREFIX}keyup-`,
+	// --- マウス（ホバー演出・PC向け） ---
+	mouseover: `${JS_PREFIX}mouseover-`,
+	mouseout: `${JS_PREFIX}mouseout-`,
 };
 
+const PAGE_LEVEL_EVENTS: Set<DomEventName> = new Set([
+	"visibilitychange",
+	"pageshow",
+	"pagehide",
+	"online",
+	"offline",
+]);
+
 const eventBound = new Set<string>();
+let isPointerTracking = false;
 
 function use(name: string, handler: DomTriggerHandler) {
 	if (!isKebabName(name)) {
@@ -96,16 +106,10 @@ async function runLoad() {
 async function runShow() {
 	if (typeof document === "undefined") return;
 	const showPrefix = EVENT_PREFIX_MAP.pageshow;
-	if (showPrefix === undefined) return;
-	const nodes = Array.from(
-		document.querySelectorAll(
-			`[class^="${showPrefix}"], [class*=" ${showPrefix}"]`
-		)
-	);
-	for (const el of nodes) {
-		const names = getTriggerNames(el, showPrefix);
-		for (const name of names) void invoke(name, el);
-	}
+	if (!showPrefix) return;
+	const el = document.body;
+	const names = getTriggerNames(el, showPrefix);
+	for (const name of names) void invoke(name, el);
 }
 
 function listenDelegated(eventName: DomEventName) {
@@ -116,12 +120,25 @@ function listenDelegated(eventName: DomEventName) {
 	const prefix = EVENT_PREFIX_MAP[eventName];
 	if (!prefix) return;
 
-	document.addEventListener(eventName, (ev: Event) => {
-		const target = ev.target as Element | null;
+	const isNetworkEvent = eventName === "online" || eventName === "offline";
+	const listener = isNetworkEvent ? window : document;
+
+	listener.addEventListener(eventName, (ev: Event) => {
+		if (eventName === "pointermove" && !isPointerTracking) return;
+		if (eventName === "pointerup" || eventName === "pointercancel")
+			isPointerTracking = false;
+
+		const target = PAGE_LEVEL_EVENTS.has(eventName)
+			? document.body
+			: ev.target instanceof Element
+			? ev.target
+			: null;
 		if (!target) return;
 
 		const el = target.closest(`[class^="${prefix}"], [class*=" ${prefix}"]`);
 		if (!el) return;
+
+		if (eventName === "pointerdown") isPointerTracking = true;
 
 		const names = getTriggerNames(el, prefix);
 		for (const name of names) invoke(name, el, ev);
