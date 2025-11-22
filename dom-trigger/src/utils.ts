@@ -3,13 +3,12 @@ export function isKebabName(name: string): boolean {
 }
 
 export function getTriggerNames(el: Element, prefix: string): string[] {
-	const classes = (el.getAttribute("class") || "").split(/\s+/);
 	const names: string[] = [];
-	for (const cls of classes) {
-		if (!cls.startsWith(prefix)) continue;
+	el.classList.forEach((cls) => {
+		if (!cls.startsWith(prefix)) return;
 		const name = cls.slice(prefix.length);
 		if (isKebabName(name)) names.push(name);
-	}
+	});
 	return names;
 }
 

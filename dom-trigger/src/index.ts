@@ -160,7 +160,7 @@ function listen() {
 		listenDelegated(ev as DomEventName);
 }
 
-function setupViewObserver() {
+function observeView() {
 	if (typeof document === "undefined") return;
 	if (typeof IntersectionObserver === "undefined") return;
 
@@ -224,21 +224,22 @@ function clear() {
 	Registry.clear();
 }
 
+function setup() {
+	runLoad();
+	runShow();
+	listen();
+	observeView();
+}
+
 export const DomTrigger = {
 	use,
 	invoke,
 	run,
 	runLoad,
 	runShow,
+	listen,
+	observeView,
 	unuse,
 	clear,
+	setup,
 };
-
-if (typeof document !== "undefined") {
-	document.addEventListener("DOMContentLoaded", () => {
-		runLoad();
-		runShow();
-		listen();
-		setupViewObserver();
-	});
-}
