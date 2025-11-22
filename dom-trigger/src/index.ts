@@ -1,10 +1,20 @@
 import { DomTriggerData, DomTriggerHandler } from "./types";
-import { getTriggerNames, collectData, isKebabName } from "./utils";
+import {
+	getTriggerNames,
+	collectData,
+	isKebabName,
+	isElementCenterInView,
+} from "./utils";
 import { Registry } from "./registry";
 
 const JS_PREFIX = "js-";
 
 const LOAD_PREFIX = `${JS_PREFIX}load-`;
+
+const VIEWIN_PREFIX = `${JS_PREFIX}viewin-`;
+const VIEWOUT_PREFIX = `${JS_PREFIX}viewout-`;
+
+const viewState = new WeakMap<Element, "in" | "out">();
 
 type DomEventName =
 	| keyof HTMLElementEventMap
@@ -150,6 +160,62 @@ function listen() {
 		listenDelegated(ev as DomEventName);
 }
 
+function setupViewObserver() {
+	if (typeof document === "undefined") return;
+	if (typeof IntersectionObserver === "undefined") return;
+
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!(entry.target instanceof Element)) continue;
+				const el = entry.target;
+
+				let isViewIn = false;
+
+				const attrCenter = el.getAttribute("data-view-center");
+				if (attrCenter !== null) {
+					const rawCenter = attrCenter ? parseInt(attrCenter, 10) : 20;
+					const offset = rawCenter >= 0 ? rawCenter : 20;
+					isViewIn = isElementCenterInView(entry, offset);
+				} else {
+					const attrRatio = el.getAttribute("data-view-ratio");
+					const rawRatio = attrRatio ? parseFloat(attrRatio) : 0;
+					const thresholdRatio = rawRatio >= 0 && rawRatio <= 1 ? rawRatio : 0;
+					const currentRatio = entry.intersectionRatio;
+					isViewIn = currentRatio >= thresholdRatio;
+				}
+
+				const prev = viewState.get(el);
+
+				if (entry.isIntersecting && isViewIn) {
+					if (prev === "in") continue;
+					const names = getTriggerNames(el, VIEWIN_PREFIX);
+					for (const name of names) void invoke(name, el);
+					viewState.set(el, "in");
+				} else {
+					if (prev !== "in") continue;
+					const names = getTriggerNames(el, VIEWOUT_PREFIX);
+					for (const name of names) void invoke(name, el);
+					viewState.set(el, "out");
+				}
+			}
+		},
+		{
+			threshold: Array.from({ length: 11 }, (_, i) => i / 10),
+		}
+	);
+
+	const selector = [
+		`[class^="${VIEWIN_PREFIX}"]`,
+		`[class*=" ${VIEWIN_PREFIX}"]`,
+		`[class^="${VIEWOUT_PREFIX}"]`,
+		`[class*=" ${VIEWOUT_PREFIX}"]`,
+	].join(", ");
+
+	const nodes = document.querySelectorAll(selector);
+	nodes.forEach((el) => observer.observe(el));
+}
+
 function unuse(name: string) {
 	Registry.delete(name);
 }
@@ -173,5 +239,6 @@ if (typeof document !== "undefined") {
 		runLoad();
 		runShow();
 		listen();
+		setupViewObserver();
 	});
 }

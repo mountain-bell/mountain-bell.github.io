@@ -47,3 +47,16 @@ export function collectData(
 
 	return parsed;
 }
+
+export function isElementCenterInView(
+	entry: IntersectionObserverEntry,
+	offset: number
+) {
+	const rect = entry.boundingClientRect;
+	const elementCenter = rect.top + rect.height / 2;
+
+	const viewportCenter = window.innerHeight / 2;
+	const diff = Math.abs(elementCenter - viewportCenter);
+
+	return diff <= offset;
+}
