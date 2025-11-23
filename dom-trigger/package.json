@@ -24,14 +24,14 @@
 		"build:ts": "tsc -p tsconfig.json",
 		"build:npm": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --sourcemap --minify",
 		"build:npm:esm": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.mjs --sourcemap --minify",
-		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomTrigger --outfile=dom-trigger.js --sourcemap --minify",
+		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomTrigger --outfile=dom-trigger.js --sourcemap --minify --footer:js=\"DomTrigger = DomTrigger.default || DomTrigger;\"",
 		"build:types:raw": "tsc -p tsconfig.types.json",
 		"build:types:bundle": "dts-bundle-generator -o dist/index.d.ts types-tmp/index.d.ts",
 		"build:types:clean": "rimraf types-tmp",
 		"build:types": "npm run build:types:raw && npm run build:types:bundle && npm run build:types:clean",
 		"build": "npm run clean && npm run build:ts && npm run build:npm && npm run build:npm:esm && npm run build:browser && npm run build:types",
 		"dev:ts": "tsc -p tsconfig.json -w",
-		"dev:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomTrigger --outfile=dom-trigger.js --sourcemap --watch",
+		"dev:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomTrigger --outfile=dom-trigger.js --sourcemap --watch --footer:js=\"DomTrigger = DomTrigger.default || DomTrigger;\"",
 		"dev": "npm-run-all -p dev:ts dev:browser",
 		"prepublishOnly": "npm run build"
 	}

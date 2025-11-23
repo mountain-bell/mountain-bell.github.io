@@ -231,7 +231,7 @@ function setup() {
 	observeView();
 }
 
-export const DomTrigger = {
+const DomTrigger = {
 	use,
 	invoke,
 	run,
@@ -243,3 +243,5 @@ export const DomTrigger = {
 	clear,
 	setup,
 };
+
+export default DomTrigger;
