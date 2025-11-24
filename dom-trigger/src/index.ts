@@ -1,4 +1,4 @@
-import { DomTriggerData, DomTriggerHandler } from "./types";
+import { DomTriggerArgs, DomTriggerHandler } from "./types";
 import {
 	getTriggerNames,
 	collectData,
@@ -86,10 +86,10 @@ async function invoke(name: string, el: Element, event?: Event) {
 	const handler = Registry.get(name);
 	if (!handler) return;
 	const data = collectData(el, name);
-	await handler(el, data, { name, event });
+	await handler({ el, data, ctx: { name, event } });
 }
 
-async function run(name: string, el: Element | null, data?: DomTriggerData) {
+async function run(name: string, args: DomTriggerArgs) {
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.run] Invalid trigger name: "${name}". Use kebab-case.`
@@ -97,7 +97,7 @@ async function run(name: string, el: Element | null, data?: DomTriggerData) {
 	}
 	const handler = Registry.get(name);
 	if (!handler) return;
-	await handler(el, data ?? {}, { name });
+	await handler(args);
 }
 
 async function runLoad() {
