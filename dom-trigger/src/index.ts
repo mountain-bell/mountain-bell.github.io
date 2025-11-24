@@ -77,6 +77,17 @@ function use(name: string, handler: DomTriggerHandler) {
 	Registry.set(name, handler);
 }
 
+async function run(name: string, args: DomTriggerArgs) {
+	if (!isKebabName(name)) {
+		throw new Error(
+			`[DomTrigger.run] Invalid trigger name: "${name}". Use kebab-case.`
+		);
+	}
+	const handler = Registry.get(name);
+	if (!handler) return;
+	await handler(args);
+}
+
 async function invoke(name: string, el: Element, event?: Event) {
 	if (!isKebabName(name)) {
 		throw new Error(
@@ -89,18 +100,7 @@ async function invoke(name: string, el: Element, event?: Event) {
 	await handler({ el, data, ctx: { name, event } });
 }
 
-async function run(name: string, args: DomTriggerArgs) {
-	if (!isKebabName(name)) {
-		throw new Error(
-			`[DomTrigger.run] Invalid trigger name: "${name}". Use kebab-case.`
-		);
-	}
-	const handler = Registry.get(name);
-	if (!handler) return;
-	await handler(args);
-}
-
-async function runLoad() {
+async function invokeLoad() {
 	if (typeof document === "undefined") return;
 	const nodes = Array.from(
 		document.querySelectorAll(
@@ -113,7 +113,7 @@ async function runLoad() {
 	}
 }
 
-async function runShow() {
+async function invokeShow() {
 	if (typeof document === "undefined") return;
 	const showPrefix = EVENT_PREFIX_MAP.pageshow;
 	if (!showPrefix) return;
@@ -225,18 +225,18 @@ function clear() {
 }
 
 function setup() {
-	runLoad();
-	runShow();
+	invokeLoad();
+	invokeShow();
 	listen();
 	observeView();
 }
 
 const DomTrigger = {
 	use,
-	invoke,
 	run,
-	runLoad,
-	runShow,
+	invoke,
+	invokeLoad,
+	invokeShow,
 	listen,
 	observeView,
 	unuse,
