@@ -239,6 +239,15 @@ function setup() {
 	observeView();
 }
 
+function setupOnReady() {
+	if (typeof document === "undefined") return;
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", setup, { once: true });
+		return;
+	}
+	setup();
+}
+
 const DomTrigger = {
 	use,
 	run,
@@ -250,6 +259,7 @@ const DomTrigger = {
 	unuse,
 	clear,
 	setup,
+	setupOnReady,
 };
 
 export default DomTrigger;
