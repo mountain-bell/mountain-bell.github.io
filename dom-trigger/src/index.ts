@@ -14,6 +14,9 @@ const LOAD_PREFIX = `${JS_PREFIX}load-`;
 const VIEWIN_PREFIX = `${JS_PREFIX}viewin-`;
 const VIEWOUT_PREFIX = `${JS_PREFIX}viewout-`;
 
+const VIEW_PARAM_CENTER = "view-center";
+const VIEW_PARAM_RATIO = "view-ratio";
+
 const viewState = new WeakMap<Element, "in" | "out">();
 
 type DomEventName =
@@ -68,16 +71,21 @@ const PAGE_LEVEL_EVENTS: Set<DomEventName> = new Set([
 const eventBound = new Set<string>();
 let isPointerTracking = false;
 
+const RESERVED_TRIGGER_NAMES = new Set([VIEW_PARAM_CENTER, VIEW_PARAM_RATIO]);
+
 function use(name: string, handler: DomTriggerHandler) {
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.use] Invalid trigger name: "${name}". Use kebab-case.`
 		);
 	}
+	if (RESERVED_TRIGGER_NAMES.has(name)) {
+		throw new Error(`[DomTrigger.use] Reserved trigger name: "${name}".`);
+	}
 	Registry.set(name, handler);
 }
 
-async function run(name: string, args: DomTriggerArgs) {
+async function run(name: string, args?: DomTriggerArgs) {
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.run] Invalid trigger name: "${name}". Use kebab-case.`
@@ -85,7 +93,7 @@ async function run(name: string, args: DomTriggerArgs) {
 	}
 	const handler = Registry.get(name);
 	if (!handler) return;
-	await handler(args);
+	await handler(args ? args : {});
 }
 
 async function invoke(name: string, el: Element, event?: Event) {
@@ -172,13 +180,13 @@ function observeView() {
 
 				let isViewIn = false;
 
-				const attrCenter = el.getAttribute("data-view-center");
+				const attrCenter = el.getAttribute(`data-${VIEW_PARAM_CENTER}`);
 				if (attrCenter !== null) {
 					const rawCenter = attrCenter ? parseInt(attrCenter, 10) : 20;
 					const offset = rawCenter >= 0 ? rawCenter : 20;
 					isViewIn = isElementCenterInView(entry, offset);
 				} else {
-					const attrRatio = el.getAttribute("data-view-ratio");
+					const attrRatio = el.getAttribute(`data-${VIEW_PARAM_RATIO}`);
 					const rawRatio = attrRatio ? parseFloat(attrRatio) : 0;
 					const thresholdRatio = rawRatio >= 0 && rawRatio <= 1 ? rawRatio : 0;
 					const currentRatio = entry.intersectionRatio;
