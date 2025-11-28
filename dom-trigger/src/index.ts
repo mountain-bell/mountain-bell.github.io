@@ -77,20 +77,20 @@ const PAGE_LEVEL_EVENTS: Set<DomEventName> = new Set([
 	"offline",
 ]);
 
-const DOM_EVENTS = Object.keys(EVENT_PREFIX_MAP);
+const EVENT_NAME_LIST = Object.keys(EVENT_PREFIX_MAP);
 
 const EVENT_PARAM_PREVENT_DEFAULT = "prevent-default";
 const EVENT_PARAM_STOP_PROPAGATION = "stop-propagation";
 
-const EVENT_PARAM_PREVENT_DEFAULT_LIST = DOM_EVENTS.map(
+const EVENT_PARAM_PREVENT_DEFAULT_LIST = EVENT_NAME_LIST.map(
 	(eventName) => `${eventName}-${EVENT_PARAM_PREVENT_DEFAULT}`
 );
-const EVENT_PARAM_STOP_PROPAGATION_LIST = DOM_EVENTS.map(
+const EVENT_PARAM_STOP_PROPAGATION_LIST = EVENT_NAME_LIST.map(
 	(eventName) => `${eventName}-${EVENT_PARAM_STOP_PROPAGATION}`
 );
 
-const eventBound = new Set<string>();
-let isPointerTracking = false;
+const boundEvents = new Set<string>();
+let isTrackingPointer = false;
 
 const RESERVED_TRIGGER_NAMES = new Set([
 	VIEW_PARAM_CENTER,
@@ -184,8 +184,8 @@ async function invokeShow() {
 
 function listenDelegated(eventName: DomEventName) {
 	if (typeof document === "undefined") return;
-	if (eventBound.has(eventName)) return;
-	eventBound.add(eventName);
+	if (boundEvents.has(eventName)) return;
+	boundEvents.add(eventName);
 
 	const prefix = EVENT_PREFIX_MAP[eventName];
 	if (!prefix) return;
@@ -194,9 +194,9 @@ function listenDelegated(eventName: DomEventName) {
 	const listener = isNetworkEvent ? window : document;
 
 	listener.addEventListener(eventName, (ev: Event) => {
-		if (eventName === "pointermove" && !isPointerTracking) return;
+		if (eventName === "pointermove" && !isTrackingPointer) return;
 		if (eventName === "pointerup" || eventName === "pointercancel")
-			isPointerTracking = false;
+			isTrackingPointer = false;
 
 		const target = PAGE_LEVEL_EVENTS.has(eventName)
 			? document.body
@@ -222,7 +222,7 @@ function listenDelegated(eventName: DomEventName) {
 			attrStopPropagation !== null && attrStopPropagation !== "false";
 		if (shouldStopPropagation) ev.stopPropagation();
 
-		if (eventName === "pointerdown") isPointerTracking = true;
+		if (eventName === "pointerdown") isTrackingPointer = true;
 
 		const names = getTriggerNames(el, prefix);
 		for (const name of names) invoke(name, el, ev);
@@ -230,8 +230,8 @@ function listenDelegated(eventName: DomEventName) {
 }
 
 function listen() {
-	for (const ev of Object.keys(EVENT_PREFIX_MAP))
-		listenDelegated(ev as DomEventName);
+	for (const eventName of EVENT_NAME_LIST)
+		listenDelegated(eventName as DomEventName);
 }
 
 function observeView() {
