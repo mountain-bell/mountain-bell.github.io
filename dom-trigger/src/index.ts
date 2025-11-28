@@ -68,10 +68,27 @@ const PAGE_LEVEL_EVENTS: Set<DomEventName> = new Set([
 	"offline",
 ]);
 
+const DOM_EVENTS = Object.keys(EVENT_PREFIX_MAP);
+
+const EVENT_PARAM_PREVENT_DEFAULT = "prevent-default";
+const EVENT_PARAM_STOP_PROPAGATION = "stop-propagation";
+
+const EVENT_PARAM_PREVENT_DEFAULT_LIST = DOM_EVENTS.map(
+	(eventName) => `${eventName}-${EVENT_PARAM_PREVENT_DEFAULT}`
+);
+const EVENT_PARAM_STOP_PROPAGATION_LIST = DOM_EVENTS.map(
+	(eventName) => `${eventName}-${EVENT_PARAM_STOP_PROPAGATION}`
+);
+
 const eventBound = new Set<string>();
 let isPointerTracking = false;
 
-const RESERVED_TRIGGER_NAMES = new Set([VIEW_PARAM_CENTER, VIEW_PARAM_RATIO]);
+const RESERVED_TRIGGER_NAMES = new Set([
+	VIEW_PARAM_CENTER,
+	VIEW_PARAM_RATIO,
+	...EVENT_PARAM_PREVENT_DEFAULT_LIST,
+	...EVENT_PARAM_STOP_PROPAGATION_LIST,
+]);
 
 function use(name: string, handler: DomTriggerHandler) {
 	if (!isKebabName(name)) {
@@ -175,6 +192,20 @@ function listenDelegated(eventName: DomEventName) {
 
 		const el = target.closest(`[class^="${prefix}"], [class*=" ${prefix}"]`);
 		if (!el) return;
+
+		const attrPreventDefault = el.getAttribute(
+			`data-${eventName}-${EVENT_PARAM_PREVENT_DEFAULT}`
+		);
+		const shouldPreventDefault =
+			attrPreventDefault !== null && attrPreventDefault !== "false";
+		if (shouldPreventDefault) ev.preventDefault();
+
+		const attrStopPropagation = el.getAttribute(
+			`data-${eventName}-${EVENT_PARAM_STOP_PROPAGATION}`
+		);
+		const shouldStopPropagation =
+			attrStopPropagation !== null && attrStopPropagation !== "false";
+		if (shouldStopPropagation) ev.stopPropagation();
 
 		if (eventName === "pointerdown") isPointerTracking = true;
 
