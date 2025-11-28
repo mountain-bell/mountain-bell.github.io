@@ -4,6 +4,7 @@ import {
 	collectData,
 	isKebabName,
 	isElementCenterInView,
+	UNCACHE_PARAM,
 } from "./utils";
 import { Registry } from "./registry";
 
@@ -88,7 +89,10 @@ const RESERVED_TRIGGER_NAMES = new Set([
 	VIEW_PARAM_RATIO,
 	...EVENT_PARAM_PREVENT_DEFAULT_LIST,
 	...EVENT_PARAM_STOP_PROPAGATION_LIST,
+	UNCACHE_PARAM,
 ]);
+
+const RESERVED_TRIGGER_NAME_PREFIX = `${UNCACHE_PARAM}-`;
 
 function use(name: string, handler: DomTriggerHandler) {
 	if (!isKebabName(name)) {
@@ -96,7 +100,10 @@ function use(name: string, handler: DomTriggerHandler) {
 			`[DomTrigger.use] Invalid trigger name: "${name}". Use kebab-case.`
 		);
 	}
-	if (RESERVED_TRIGGER_NAMES.has(name)) {
+	if (
+		RESERVED_TRIGGER_NAMES.has(name) ||
+		name.startsWith(RESERVED_TRIGGER_NAME_PREFIX)
+	) {
 		throw new Error(`[DomTrigger.use] Reserved trigger name: "${name}".`);
 	}
 	Registry.set(name, handler);

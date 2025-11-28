@@ -14,11 +14,13 @@ export function getTriggerNames(el: Element, prefix: string): string[] {
 
 const cache = new WeakMap<Element, Map<string, Record<string, unknown>>>();
 
+export const UNCACHE_PARAM = "uncache";
+
 export function collectData(
 	el: Element,
 	name: string
 ): Record<string, unknown> {
-	const uncacheAttr = `data-uncache-${name}`;
+	const uncacheAttr = `data-${UNCACHE_PARAM}-${name}`;
 	const shouldCache = !el.hasAttribute(uncacheAttr);
 
 	if (shouldCache) {
