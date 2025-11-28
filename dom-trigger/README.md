@@ -1,16 +1,27 @@
 # DomTrigger
 
-軽量でクラス名ベースの DOM トリガー管理ユーティリティ。\
-`js-load-*` や `js-click-*`
-などのクラス名を使って、要素に紐づく動作を簡単に実装できます。
+軽量でクラス名ベースの DOM トリガー管理ユーティリティ。  
+`js-load-*` や `js-click-*` などのクラス名を使い、HTML から直感的に挙動を定義できます。
+
+- イベントリスナー配置で迷いたくない
+- jQuery / フレームワークなしで小さなインタラクションを量産したい
+- SSR / 静的サイトで、HTML に挙動を埋め込みたい
+
+そんなニーズに応える、実用性の高いミニマルなライブラリです。
+
+---
 
 ## 特徴
 
-- クラス名から自動でトリガーを検出
-- カスタムハンドラを登録可能
-- 非同期関数にも対応
-- IntersectionObserver を使った View トリガー
-- data-\* 属性の JSON の自動パース
+- **クラス名ルール**（`js-click-*` など）からトリガーを自動検出
+- トリガー名ごとに **1 つのハンドラ登録で完結**
+- **async 対応**
+- IntersectionObserver による **view-in / view-out トリガー**
+- `data-*` の JSON 自動パース & キャッシュ
+- `prevent-default` / `stop-propagation` を **HTML 側で制御可能**
+- デリゲーション方式で **高パフォーマンス & リスナー最小限**
+
+---
 
 ## インストール
 
@@ -18,78 +29,170 @@
 npm install dom-trigger
 ```
 
+---
+
 ## 基本的な使い方
 
 ### 1. ハンドラを登録
 
 ```ts
-DomTrigger.use("fade-in", (el, data, ctx) => {
+import DomTrigger from "dom-trigger";
+
+DomTrigger.use("fade-in", ({ el }) => {
 	el?.classList.add("is-visible");
 });
 ```
 
-### 2. HTML でクラスを付与
+ハンドラのシグネチャは次のとおり：
+
+```ts
+handler({ el, data, ctx });
+```
+
+- `el`: 対象要素
+- `data`: `data-<name>` の JSON パース結果
+- `ctx.name`: トリガー名
+- `ctx.event`: 元のイベント（任意）
+
+---
+
+### 2. HTML にクラスを付与
 
 ```html
 <div class="js-viewin-fade-in" data-view-center="100"></div>
 ```
 
-### 3. 初期化（最も一般的な使い方）
+- `js-viewin-` → トリガー種別
+- `fade-in` → `DomTrigger.use("fade-in")` の対象名
+- `data-view-center` → 発火条件（要素が画面中央付近に来たら）
 
-`setup()` は以下を自動で行います： - `runLoad()` - `runShow()` -
-`listen()` - `observeView()`
+---
 
-#### 推奨される初期化方法（HTML の読み込み完了後）
+### 3. 初期化 (最も簡単)
 
 ```ts
-if (typeof document !== "undefined") {
-	const setupDomTrigger = () => {
-		DomTrigger.setup();
-	};
-
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", setupDomTrigger, {
-			once: true,
-		});
-	} else {
-		setupDomTrigger();
-	}
-}
+DomTrigger.setupOnReady();
 ```
+
+`setupOnReady()` は内部で：
+
+- DOMContentLoaded 待ち
+- `setup()` の実行
+  （`load` トリガー、`pageshow` トリガー、イベント監視、view 監視）
 
 ---
 
-## トリガー種別
+## DomTrigger の有効性
 
-### バブリングイベントトリガー（click など）
-
-document にイベントデリゲートされるタイプ。
+### 🎯 HTML 側だけで挙動の切り替えが可能
 
 ```html
-<button class="js-click-like-button"></button>
+<button class="js-click-open-modal" data-open-modal='{"id": 123}'>OPEN</button>
 ```
+
+```ts
+DomTrigger.use("open-modal", ({ data }) => {
+	console.log(data.id); // 123
+});
+```
+
+- デザイナーも HTML 側だけで制御できる
+- JS は「ハンドラを 1 つ書くだけ」で複数要素に適用できる
 
 ---
 
-### Load トリガー
+### 🎯 スクロール連動アニメの実装がシンプル
 
-ページ読み込み時（setup 実行時）に即発火。
+```html
+<section class="js-viewin-fade" data-view-ratio="0.3"></section>
+```
+
+```ts
+DomTrigger.use("fade", ({ el }) => {
+	el?.classList.add("active");
+});
+```
+
+- IntersectionObserver により **scroll イベント不要**
+- 動的要素も `observeView()` の再実行で安全に監視追加可能
+
+---
+
+### 🎯 data 属性 JSON の自動パース & キャッシュ
+
+```html
+<div class="js-click-track" data-track='{"category":"cta"}'></div>
+```
+
+```ts
+DomTrigger.use("track", ({ data }) => {
+	// data → { category: "cta" }
+});
+```
+
+- JSON.parse のコストを WeakMap キャッシュで削減
+- 更新が必要なら `data-uncache-<name>` を使うだけ
+
+---
+
+### 🎯 preventDefault / stopPropagation を HTML で制御
+
+```html
+<a class="js-click-open" data-click-prevent-default> OPEN </a>
+```
+
+```html
+<button class="js-click-like js-click-track" data-click-stop-propagation>
+	Like
+</button>
+```
+
+JS で毎回 `event.preventDefault()` を書く必要がないため **HTML 主導の UI 設計ができる**。
+
+---
+
+## トリガー種別（trigger types）
+
+### 🟦 バブリングイベント（click, change など）
+
+document/window にデリゲート。
+
+```html
+<button class="js-click-like"></button>
+```
+
+サポートされるイベント例：
+
+- click / change / input / submit
+- focusin / focusout
+- pointerdown / pointermove / pointerup
+- keydown / keyup
+- mouseover / mouseout
+- pageshow / pagehide / visibilitychange
+- online / offline
+- copy / paste
+
+---
+
+### 🟩 Load トリガー
 
 ```html
 <div class="js-load-init"></div>
 ```
 
+`DomTrigger.setup()` 時に実行。
+
 ---
 
-### View トリガー（viewin / viewout）
-
-要素がビューポートに入る／出るタイミングで発火。
+### 🟧 View トリガー（viewin / viewout）
 
 ```html
 <div class="js-viewin-fade" data-view-center="80"></div>
-
-<div class="js-viewin-fade" data-view-ratio="0.5"></div>
+<div class="js-viewout-fade"></div>
 ```
+
+- `data-view-center` → 中心基準
+- `data-view-ratio` → 表示割合基準 (0〜1)
 
 ---
 
@@ -97,57 +200,77 @@ document にイベントデリゲートされるタイプ。
 
 ### `DomTrigger.use(name, handler)`
 
-トリガー名と実行関数を登録。
+トリガーを登録。
 
-### `DomTrigger.invoke(name, el, event?)`
-
-特定の要素に対しトリガーを直接実行。
-
-### `DomTrigger.run(name, el, data?)`
-
-任意のトリガーを手動実行。
-
-### `DomTrigger.runLoad()`
-
-Load トリガーを実行。
-
-### `DomTrigger.runShow()`
-
-pageshow トリガーを実行。
-
-### `DomTrigger.listen()`
-
-バブリングイベントの監視を開始。
-
-### `DomTrigger.observeView()`
-
-IntersectionObserver を起動（View トリガー用）。
-
-### `DomTrigger.unuse(name)`
-
-特定トリガーを削除。
-
-### `DomTrigger.clear()`
-
-登録されたすべてのトリガーを削除。
-
-### `DomTrigger.setup()`
-
-初期起動に必要な処理（runLoad / runShow / listen / observeView）を実行。
+```ts
+DomTrigger.use("open", ({ el, data, ctx }) => {
+	/* ... */
+});
+```
 
 ---
 
-## data-\* 属性の収集
+### `DomTrigger.run(name, args?)`
 
-```html
-<div class="js-load-foo" data-foo='{"id":10, "name":"john"}'></div>
-```
-
-ハンドラには次のオブジェクトが渡されます：
+明示的にトリガーを実行。
 
 ```ts
-{ id: 10, name: "john" }
+DomTrigger.run("open", { data: { id: 1 } });
 ```
+
+---
+
+### `DomTrigger.invoke(name, el, event?)`
+
+特定要素でトリガーを実行（data 自動パース）。
+
+---
+
+### `DomTrigger.invokeLoad()`
+
+Load トリガーを実行（通常は `setup()` で自動）。
+
+---
+
+### `DomTrigger.invokeShow()`
+
+pageshow トリガーを実行。
+
+---
+
+### `DomTrigger.listen()`
+
+バブリングイベントの監視開始（重複監視なし）。
+
+---
+
+### `DomTrigger.observeView()`
+
+IntersectionObserver による viewin / viewout 監視。
+
+---
+
+### `DomTrigger.unuse(name)`
+
+登録済みトリガーを削除。
+
+---
+
+### `DomTrigger.clear()`
+
+登録済みトリガーをすべて削除。
+
+---
+
+### `DomTrigger.setup()`
+
+Load / Show / Event / View をまとめて初期化。
+
+---
+
+### `DomTrigger.setupOnReady()`
+
+DOMContentLoaded 待ち → setup 実行。
 
 ---
 
