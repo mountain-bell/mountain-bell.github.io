@@ -69,12 +69,16 @@ const EVENT_PREFIX_MAP: Partial<Record<DomEventName, string>> = {
 	mouseout: `${JS_PREFIX}mouseout-`,
 };
 
-const PAGE_LEVEL_EVENTS: Set<DomEventName> = new Set([
-	"visibilitychange",
+const WINDOW_EVENT: Set<DomEventName> = new Set([
 	"pageshow",
 	"pagehide",
 	"online",
 	"offline",
+]);
+
+const PAGE_LEVEL_EVENTS: Set<DomEventName> = new Set([
+	"visibilitychange",
+	...WINDOW_EVENT,
 ]);
 
 const EVENT_NAME_LIST = Object.keys(EVENT_PREFIX_MAP);
@@ -190,8 +194,7 @@ function listenDelegated(eventName: DomEventName) {
 	const prefix = EVENT_PREFIX_MAP[eventName];
 	if (!prefix) return;
 
-	const isNetworkEvent = eventName === "online" || eventName === "offline";
-	const listener = isNetworkEvent ? window : document;
+	const listener = WINDOW_EVENT.has(eventName) ? window : document;
 
 	listener.addEventListener(eventName, (ev: Event) => {
 		if (eventName === "pointermove" && !isTrackingPointer) return;
