@@ -17,7 +17,15 @@ const VIEWOUT_PREFIX = `${JS_PREFIX}viewout-`;
 
 const VIEW_PARAM_CENTER = "view-center";
 const VIEW_PARAM_RATIO = "view-ratio";
+const viewSelector = [
+	`[class^="${VIEWIN_PREFIX}"]`,
+	`[class*=" ${VIEWIN_PREFIX}"]`,
+	`[class^="${VIEWOUT_PREFIX}"]`,
+	`[class*=" ${VIEWOUT_PREFIX}"]`,
+].join(", ");
 
+let viewObserver: IntersectionObserver | null = null;
+const observedElements = new WeakSet<Element>();
 const viewState = new WeakMap<Element, "in" | "out">();
 
 type DomEventName =
@@ -230,56 +238,57 @@ function observeView() {
 	if (typeof document === "undefined") return;
 	if (typeof IntersectionObserver === "undefined") return;
 
-	const observer = new IntersectionObserver(
-		(entries) => {
-			for (const entry of entries) {
-				if (!(entry.target instanceof Element)) continue;
-				const el = entry.target;
+	if (!viewObserver) {
+		viewObserver = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (!(entry.target instanceof Element)) continue;
+					const el = entry.target;
 
-				let isViewIn = false;
+					let isViewIn = false;
 
-				const attrCenter = el.getAttribute(`data-${VIEW_PARAM_CENTER}`);
-				if (attrCenter !== null) {
-					const rawCenter = attrCenter ? parseInt(attrCenter, 10) : 20;
-					const offset = rawCenter >= 0 ? rawCenter : 20;
-					isViewIn = isElementCenterInView(entry, offset);
-				} else {
-					const attrRatio = el.getAttribute(`data-${VIEW_PARAM_RATIO}`);
-					const rawRatio = attrRatio ? parseFloat(attrRatio) : 0;
-					const thresholdRatio = rawRatio >= 0 && rawRatio <= 1 ? rawRatio : 0;
-					const currentRatio = entry.intersectionRatio;
-					isViewIn = currentRatio >= thresholdRatio;
+					const attrCenter = el.getAttribute(`data-${VIEW_PARAM_CENTER}`);
+					if (attrCenter !== null) {
+						const rawCenter = attrCenter ? parseInt(attrCenter, 10) : 20;
+						const offset = rawCenter >= 0 ? rawCenter : 20;
+						isViewIn = isElementCenterInView(entry, offset);
+					} else {
+						const attrRatio = el.getAttribute(`data-${VIEW_PARAM_RATIO}`);
+						const rawRatio = attrRatio ? parseFloat(attrRatio) : 0;
+						const thresholdRatio =
+							rawRatio >= 0 && rawRatio <= 1 ? rawRatio : 0;
+						const currentRatio = entry.intersectionRatio;
+						isViewIn = currentRatio >= thresholdRatio;
+					}
+
+					const prev = viewState.get(el);
+
+					if (entry.isIntersecting && isViewIn) {
+						if (prev === "in") continue;
+						const names = getTriggerNames(el, VIEWIN_PREFIX);
+						for (const name of names) void invoke(name, el);
+						viewState.set(el, "in");
+					} else {
+						if (prev !== "in") continue;
+						const names = getTriggerNames(el, VIEWOUT_PREFIX);
+						for (const name of names) void invoke(name, el);
+						viewState.set(el, "out");
+					}
 				}
-
-				const prev = viewState.get(el);
-
-				if (entry.isIntersecting && isViewIn) {
-					if (prev === "in") continue;
-					const names = getTriggerNames(el, VIEWIN_PREFIX);
-					for (const name of names) void invoke(name, el);
-					viewState.set(el, "in");
-				} else {
-					if (prev !== "in") continue;
-					const names = getTriggerNames(el, VIEWOUT_PREFIX);
-					for (const name of names) void invoke(name, el);
-					viewState.set(el, "out");
-				}
+			},
+			{
+				threshold: Array.from({ length: 11 }, (_, i) => i / 10),
 			}
-		},
-		{
-			threshold: Array.from({ length: 11 }, (_, i) => i / 10),
+		);
+	}
+
+	const nodes = document.querySelectorAll(viewSelector);
+	nodes.forEach((el) => {
+		if (viewObserver && !observedElements.has(el)) {
+			viewObserver.observe(el);
+			observedElements.add(el);
 		}
-	);
-
-	const selector = [
-		`[class^="${VIEWIN_PREFIX}"]`,
-		`[class*=" ${VIEWIN_PREFIX}"]`,
-		`[class^="${VIEWOUT_PREFIX}"]`,
-		`[class*=" ${VIEWOUT_PREFIX}"]`,
-	].join(", ");
-
-	const nodes = document.querySelectorAll(selector);
-	nodes.forEach((el) => observer.observe(el));
+	});
 }
 
 function unuse(name: string) {
