@@ -117,7 +117,17 @@ async function invokeLoad() {
 	);
 	for (const el of nodes) {
 		const names = getTriggerNames(el, LOAD_PREFIX);
-		for (const name of names) void invoke(name, el);
+		for (const name of names) {
+			try {
+				await invoke(name, el);
+			} catch (e) {
+				console.error(
+					`[DomTrigger.invokeLoad] Failed to invoke "${name}":`,
+					el,
+					e
+				);
+			}
+		}
 	}
 }
 
@@ -127,7 +137,17 @@ async function invokeShow() {
 	if (!showPrefix) return;
 	const el = document.body;
 	const names = getTriggerNames(el, showPrefix);
-	for (const name of names) void invoke(name, el);
+	for (const name of names) {
+		try {
+			await invoke(name, el);
+		} catch (e) {
+			console.error(
+				`[DomTrigger.invokeShow] Failed to invoke "${name}":`,
+				el,
+				e
+			);
+		}
+	}
 }
 
 function listenDelegated(eventName: DomEventName) {
@@ -232,20 +252,27 @@ function clear() {
 	Registry.clear();
 }
 
-function setup() {
-	invokeLoad();
-	invokeShow();
+async function setup() {
+	await invokeLoad();
+	await invokeShow();
 	listen();
 	observeView();
 }
 
-function setupOnReady() {
+async function setupOnReady() {
 	if (typeof document === "undefined") return;
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", setup, { once: true });
-		return;
+		await new Promise<void>((resolve) => {
+			document.addEventListener("DOMContentLoaded", () => resolve(), {
+				once: true,
+			});
+		});
 	}
-	setup();
+	try {
+		await setup();
+	} catch (e) {
+		console.error("[DomTrigger.setupOnReady] Failed to setup:", e);
+	}
 }
 
 const DomTrigger = {
