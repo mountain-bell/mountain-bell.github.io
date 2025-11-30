@@ -10,30 +10,20 @@ import { Registry } from "./registry";
 
 const JS_PREFIX = "js-";
 
-const LOAD_PREFIX = `${JS_PREFIX}load-`;
-
-const VIEWIN_PREFIX = `${JS_PREFIX}viewin-`;
-const VIEWOUT_PREFIX = `${JS_PREFIX}viewout-`;
-
-const VIEW_PARAM_CENTER = "view-center";
-const VIEW_PARAM_RATIO = "view-ratio";
-const viewSelector = [
-	`[class^="${VIEWIN_PREFIX}"]`,
-	`[class*=" ${VIEWIN_PREFIX}"]`,
-	`[class^="${VIEWOUT_PREFIX}"]`,
-	`[class*=" ${VIEWOUT_PREFIX}"]`,
-].join(", ");
-
-let viewObserver: IntersectionObserver | null = null;
-const observedElements = new WeakSet<Element>();
-const viewState = new WeakMap<Element, "in" | "out">();
-
 type DomEventName =
 	| keyof HTMLElementEventMap
 	| keyof DocumentEventMap
 	| keyof WindowEventMap;
 
 const EVENT_PREFIX_MAP: Partial<Record<DomEventName, string>> = {
+	// --- ページ ---
+	load: `${JS_PREFIX}load-`,
+	pageshow: `${JS_PREFIX}pageshow-`,
+	visibilitychange: `${JS_PREFIX}visibilitychange-`,
+	pagehide: `${JS_PREFIX}pagehide-`,
+	// --- ネットワーク ---
+	offline: `${JS_PREFIX}offline-`,
+	online: `${JS_PREFIX}online-`,
 	// --- クリック ---
 	click: `${JS_PREFIX}click-`,
 	// --- フォーム ---
@@ -51,13 +41,6 @@ const EVENT_PREFIX_MAP: Partial<Record<DomEventName, string>> = {
 	// --- アニメーション ---
 	transitionend: `${JS_PREFIX}transitionend-`,
 	animationend: `${JS_PREFIX}animationend-`,
-	// --- ページ ---
-	visibilitychange: `${JS_PREFIX}visibilitychange-`,
-	pageshow: `${JS_PREFIX}pageshow-`,
-	pagehide: `${JS_PREFIX}pagehide-`,
-	// --- ネットワーク ---
-	online: `${JS_PREFIX}online-`,
-	offline: `${JS_PREFIX}offline-`,
 	// --- クリップボード ---
 	copy: `${JS_PREFIX}copy-`,
 	paste: `${JS_PREFIX}paste-`,
@@ -69,16 +52,17 @@ const EVENT_PREFIX_MAP: Partial<Record<DomEventName, string>> = {
 	mouseout: `${JS_PREFIX}mouseout-`,
 };
 
-const WINDOW_EVENT: Set<DomEventName> = new Set([
+const WINDOW_EVENTS: Set<DomEventName> = new Set([
+	"load",
 	"pageshow",
 	"pagehide",
-	"online",
 	"offline",
+	"online",
 ]);
 
 const PAGE_LEVEL_EVENTS: Set<DomEventName> = new Set([
 	"visibilitychange",
-	...WINDOW_EVENT,
+	...WINDOW_EVENTS,
 ]);
 
 const EVENT_NAME_LIST = Object.keys(EVENT_PREFIX_MAP);
@@ -96,11 +80,27 @@ const EVENT_PARAM_STOP_PROPAGATION_LIST = EVENT_NAME_LIST.map(
 const boundEvents = new Set<string>();
 let isTrackingPointer = false;
 
+const VIEWIN_PREFIX = `${JS_PREFIX}viewin-`;
+const VIEWOUT_PREFIX = `${JS_PREFIX}viewout-`;
+
+const VIEW_PARAM_CENTER = "view-center";
+const VIEW_PARAM_RATIO = "view-ratio";
+const viewSelector = [
+	`[class^="${VIEWIN_PREFIX}"]`,
+	`[class*=" ${VIEWIN_PREFIX}"]`,
+	`[class^="${VIEWOUT_PREFIX}"]`,
+	`[class*=" ${VIEWOUT_PREFIX}"]`,
+].join(", ");
+
+let viewObserver: IntersectionObserver | null = null;
+const observedElements = new WeakSet<Element>();
+const viewState = new WeakMap<Element, "in" | "out">();
+
 const RESERVED_TRIGGER_NAMES = new Set([
-	VIEW_PARAM_CENTER,
-	VIEW_PARAM_RATIO,
 	...EVENT_PARAM_PREVENT_DEFAULT_LIST,
 	...EVENT_PARAM_STOP_PROPAGATION_LIST,
+	VIEW_PARAM_CENTER,
+	VIEW_PARAM_RATIO,
 	UNCACHE_PARAM,
 ]);
 
@@ -144,48 +144,6 @@ async function invoke(name: string, el: Element, event?: Event) {
 	await handler({ el, data, ctx: { name, event } });
 }
 
-async function invokeLoad() {
-	if (typeof document === "undefined") return;
-	const nodes = Array.from(
-		document.querySelectorAll(
-			`[class^="${LOAD_PREFIX}"], [class*=" ${LOAD_PREFIX}"]`
-		)
-	);
-	for (const el of nodes) {
-		const names = getTriggerNames(el, LOAD_PREFIX);
-		for (const name of names) {
-			try {
-				await invoke(name, el);
-			} catch (e) {
-				console.error(
-					`[DomTrigger.invokeLoad] Failed to invoke "${name}":`,
-					el,
-					e
-				);
-			}
-		}
-	}
-}
-
-async function invokeShow() {
-	if (typeof document === "undefined") return;
-	const showPrefix = EVENT_PREFIX_MAP.pageshow;
-	if (!showPrefix) return;
-	const el = document.body;
-	const names = getTriggerNames(el, showPrefix);
-	for (const name of names) {
-		try {
-			await invoke(name, el);
-		} catch (e) {
-			console.error(
-				`[DomTrigger.invokeShow] Failed to invoke "${name}":`,
-				el,
-				e
-			);
-		}
-	}
-}
-
 function listenDelegated(eventName: DomEventName) {
 	if (typeof document === "undefined") return;
 	if (boundEvents.has(eventName)) return;
@@ -194,7 +152,7 @@ function listenDelegated(eventName: DomEventName) {
 	const prefix = EVENT_PREFIX_MAP[eventName];
 	if (!prefix) return;
 
-	const listener = WINDOW_EVENT.has(eventName) ? window : document;
+	const listener = WINDOW_EVENTS.has(eventName) ? window : document;
 
 	listener.addEventListener(eventName, (ev: Event) => {
 		if (eventName === "pointermove" && !isTrackingPointer) return;
@@ -302,35 +260,36 @@ function clear() {
 	Registry.clear();
 }
 
-async function setup() {
-	await invokeLoad();
-	await invokeShow();
+function setup() {
 	listen();
 	observeView();
 }
 
-async function setupOnReady() {
+function setupOnReady() {
 	if (typeof document === "undefined") return;
+
+	const trySetup = () => {
+		try {
+			setup();
+		} catch (e) {
+			console.error("[DomTrigger.setupOnReady] Failed to setup:", e);
+		}
+	};
+
 	if (document.readyState === "loading") {
-		await new Promise<void>((resolve) => {
-			document.addEventListener("DOMContentLoaded", () => resolve(), {
-				once: true,
-			});
+		document.addEventListener("DOMContentLoaded", trySetup, {
+			once: true,
 		});
+		return;
 	}
-	try {
-		await setup();
-	} catch (e) {
-		console.error("[DomTrigger.setupOnReady] Failed to setup:", e);
-	}
+
+	trySetup();
 }
 
 const DomTrigger = {
 	use,
 	run,
 	invoke,
-	invokeLoad,
-	invokeShow,
 	listen,
 	observeView,
 	unuse,
