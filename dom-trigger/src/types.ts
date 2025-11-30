@@ -1,16 +1,25 @@
 export type DomTriggerData = Record<string, unknown>;
 
 export interface DomTriggerContext {
-	name: string;
-	event?: Event;
+	readonly name: string;
+	readonly source: "run" | "invoke";
+	readonly event?: Event;
 }
 
 export interface DomTriggerArgs<TData extends DomTriggerData = DomTriggerData> {
-	el?: Element;
-	data?: TData;
-	ctx?: DomTriggerContext;
+	readonly el?: Element;
+	readonly data?: TData;
+	readonly ctx: DomTriggerContext;
 }
 
 export type DomTriggerHandler<TData extends DomTriggerData = DomTriggerData> = (
 	args: DomTriggerArgs<TData>
 ) => void | Promise<void>;
+
+export interface DomTriggerRunOptions<
+	TData extends DomTriggerData = DomTriggerData
+> {
+	el?: Element;
+	data?: TData;
+	event?: Event;
+}

@@ -1,4 +1,8 @@
-import { DomTriggerArgs, DomTriggerData, DomTriggerHandler } from "./types";
+import {
+	DomTriggerData,
+	DomTriggerHandler,
+	DomTriggerRunOptions,
+} from "./types";
 import {
 	getTriggerNames,
 	collectData,
@@ -126,7 +130,7 @@ function use<TData extends DomTriggerData = DomTriggerData>(
 
 async function run<TData extends DomTriggerData = DomTriggerData>(
 	name: string,
-	args?: DomTriggerArgs<TData>
+	options?: DomTriggerRunOptions<TData>
 ) {
 	if (!isKebabName(name)) {
 		throw new Error(
@@ -135,7 +139,14 @@ async function run<TData extends DomTriggerData = DomTriggerData>(
 	}
 	const handler = Registry.get(name);
 	if (!handler) return;
-	await handler(args ? args : {});
+	const el = options?.el;
+	const data = options?.data;
+	const event = options?.event;
+	await handler({
+		el,
+		data,
+		ctx: { name, source: "run", event },
+	});
 }
 
 async function invoke(name: string, el: Element, event?: Event) {
@@ -147,7 +158,7 @@ async function invoke(name: string, el: Element, event?: Event) {
 	const handler = Registry.get(name);
 	if (!handler) return;
 	const data = collectData(el, name);
-	await handler({ el, data, ctx: { name, event } });
+	await handler({ el, data, ctx: { name, source: "invoke", event } });
 }
 
 function listenDelegated(eventName: DomEventName) {
