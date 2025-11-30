@@ -1,4 +1,4 @@
-import { DomTriggerArgs, DomTriggerHandler } from "./types";
+import { DomTriggerArgs, DomTriggerData, DomTriggerHandler } from "./types";
 import {
 	getTriggerNames,
 	collectData,
@@ -106,7 +106,10 @@ const RESERVED_TRIGGER_NAMES = new Set([
 
 const RESERVED_TRIGGER_NAME_PREFIX = `${UNCACHE_PARAM}-`;
 
-function use(name: string, handler: DomTriggerHandler) {
+function use<TData extends DomTriggerData = DomTriggerData>(
+	name: string,
+	handler: DomTriggerHandler<TData>
+) {
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.use] Invalid trigger name: "${name}". Use kebab-case.`
@@ -118,10 +121,13 @@ function use(name: string, handler: DomTriggerHandler) {
 	) {
 		throw new Error(`[DomTrigger.use] Reserved trigger name: "${name}".`);
 	}
-	Registry.set(name, handler);
+	Registry.set(name, handler as DomTriggerHandler);
 }
 
-async function run(name: string, args?: DomTriggerArgs) {
+async function run<TData extends DomTriggerData = DomTriggerData>(
+	name: string,
+	args?: DomTriggerArgs<TData>
+) {
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.run] Invalid trigger name: "${name}". Use kebab-case.`

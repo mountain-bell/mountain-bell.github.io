@@ -5,10 +5,12 @@ export interface DomTriggerContext {
 	event?: Event;
 }
 
-export interface DomTriggerArgs {
+export interface DomTriggerArgs<TData extends DomTriggerData = DomTriggerData> {
 	el?: Element;
-	data?: DomTriggerData;
+	data?: TData;
 	ctx?: DomTriggerContext;
 }
 
-export type DomTriggerHandler = (args: DomTriggerArgs) => void | Promise<void>;
+export type DomTriggerHandler<TData extends DomTriggerData = DomTriggerData> = (
+	args: DomTriggerArgs<TData>
+) => void | Promise<void>;
