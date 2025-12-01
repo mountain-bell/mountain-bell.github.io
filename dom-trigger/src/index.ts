@@ -4,6 +4,10 @@ import {
 	DomTriggerRunOptions,
 } from "./types";
 import {
+	assertType,
+	assertObject,
+	assertElement,
+	assertEvent,
 	isKebabName,
 	collectTriggerElements,
 	getTriggerNames,
@@ -115,6 +119,16 @@ function use<TData extends DomTriggerData = DomTriggerData>(
 	name: string,
 	handler: DomTriggerHandler<TData>
 ) {
+	assertType(
+		name,
+		"string",
+		"[DomTrigger.use] Invalid argument: the first parameter must be a string."
+	);
+	assertType(
+		handler,
+		"function",
+		"[DomTrigger.use] Invalid argument: the second parameter must be a function."
+	);
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.use] Invalid trigger name: "${name}". Use kebab-case.`
@@ -133,6 +147,16 @@ async function run<TData extends DomTriggerData = DomTriggerData>(
 	name: string,
 	options?: DomTriggerRunOptions<TData>
 ) {
+	assertType(
+		name,
+		"string",
+		"[DomTrigger.run] Invalid argument: the first parameter must be a string."
+	);
+	if (options !== undefined)
+		assertObject(
+			options,
+			"[DomTrigger.run] Invalid argument: the second parameter must be an object when provided."
+		);
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.run] Invalid trigger name: "${name}". Use kebab-case.`
@@ -151,6 +175,20 @@ async function run<TData extends DomTriggerData = DomTriggerData>(
 }
 
 async function invoke(name: string, el: Element, event?: Event) {
+	assertType(
+		name,
+		"string",
+		"[DomTrigger.invoke] Invalid argument: the first parameter must be a string."
+	);
+	assertElement(
+		el,
+		"[DomTrigger.invoke] Invalid argument: the second parameter must be an Element."
+	);
+	if (event !== undefined)
+		assertEvent(
+			event,
+			"[DomTrigger.invoke] Invalid argument: the third parameter must be an Event when provided."
+		);
 	if (!isKebabName(name)) {
 		throw new Error(
 			`[DomTrigger.invoke] Invalid trigger name: "${name}". Use kebab-case.`
@@ -284,6 +322,16 @@ function observeView() {
 }
 
 function unuse(name: string) {
+	assertType(
+		name,
+		"string",
+		"[DomTrigger.unuse] Invalid argument: the first parameter must be a string."
+	);
+	if (!isKebabName(name)) {
+		throw new Error(
+			`[DomTrigger.unuse] Invalid trigger name: "${name}". Use kebab-case.`
+		);
+	}
 	Registry.delete(name);
 }
 
@@ -297,6 +345,13 @@ function setup() {
 }
 
 function setupOnReady(callback?: () => void) {
+	if (callback !== undefined)
+		assertType(
+			callback,
+			"function",
+			"[DomTrigger.setupOnReady] Invalid argument: the first parameter must be a function when provided."
+		);
+
 	if (typeof document === "undefined") return;
 
 	const trySetup = () => {
@@ -305,7 +360,7 @@ function setupOnReady(callback?: () => void) {
 		} catch (e) {
 			console.error("[DomTrigger.setupOnReady] Failed to setup:", e);
 		}
-		if (typeof callback === "function") callback();
+		callback?.();
 	};
 
 	if (document.readyState === "loading") {

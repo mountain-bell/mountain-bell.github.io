@@ -1,3 +1,31 @@
+export function assertType(
+	value: unknown,
+	type: "string" | "function",
+	message: string
+): void {
+	if (typeof value !== type) {
+		throw new TypeError(message);
+	}
+}
+
+export function assertObject(value: unknown, message: string): void {
+	if (typeof value !== "object" || value === null) {
+		throw new TypeError(message);
+	}
+}
+
+export function assertElement(value: unknown, message: string) {
+	if (!(value instanceof Element)) {
+		throw new TypeError(message);
+	}
+}
+
+export function assertEvent(value: unknown, message: string) {
+	if (!(value instanceof Event)) {
+		throw new TypeError(message);
+	}
+}
+
 export function isKebabName(name: string): boolean {
 	return /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name);
 }
