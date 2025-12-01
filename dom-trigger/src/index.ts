@@ -13,7 +13,6 @@ import {
 	getTriggerNames,
 	UNCACHE_PARAM,
 	collectData,
-	isElementCenterInView,
 } from "./utils";
 import { Registry } from "./registry";
 
@@ -92,7 +91,6 @@ let isTrackingPointer = false;
 const VIEWIN_PREFIX = `${JS_PREFIX}viewin-`;
 const VIEWOUT_PREFIX = `${JS_PREFIX}viewout-`;
 
-const VIEW_PARAM_CENTER = "view-center";
 const VIEW_PARAM_RATIO = "view-ratio";
 const viewSelector = [
 	`[class^="${VIEWIN_PREFIX}"]`,
@@ -108,7 +106,6 @@ const viewState = new WeakMap<Element, "in" | "out">();
 const RESERVED_TRIGGER_NAMES = new Set([
 	...EVENT_PARAM_PREVENT_DEFAULT_LIST,
 	...EVENT_PARAM_STOP_PROPAGATION_LIST,
-	VIEW_PARAM_CENTER,
 	VIEW_PARAM_RATIO,
 	UNCACHE_PARAM,
 ]);
@@ -275,25 +272,16 @@ function observeView() {
 					if (!(entry.target instanceof Element)) continue;
 					const el = entry.target;
 
-					let isViewIn = false;
-
-					const attrCenter = el.getAttribute(`data-${VIEW_PARAM_CENTER}`);
-					if (attrCenter !== null) {
-						const rawCenter = attrCenter ? parseInt(attrCenter, 10) : 20;
-						const offset = rawCenter >= 0 ? rawCenter : 20;
-						isViewIn = isElementCenterInView(entry, offset);
-					} else {
-						const attrRatio = el.getAttribute(`data-${VIEW_PARAM_RATIO}`);
-						const rawRatio = attrRatio ? parseFloat(attrRatio) : 0;
-						const thresholdRatio =
-							rawRatio >= 0 && rawRatio <= 1 ? rawRatio : 0;
-						const currentRatio = entry.intersectionRatio;
-						isViewIn = currentRatio >= thresholdRatio;
-					}
+					const attrRatio = el.getAttribute(`data-${VIEW_PARAM_RATIO}`);
+					const rawRatio = attrRatio ? parseFloat(attrRatio) : 0;
+					const thresholdRatio = rawRatio >= 0 && rawRatio <= 1 ? rawRatio : 0;
+					const currentRatio = entry.intersectionRatio;
+					const isViewIn =
+						entry.isIntersecting && currentRatio >= thresholdRatio;
 
 					const prev = viewState.get(el);
 
-					if (entry.isIntersecting && isViewIn) {
+					if (isViewIn) {
 						if (prev === "in") continue;
 						const names = getTriggerNames(el, VIEWIN_PREFIX);
 						for (const name of names) void invoke(name, el);
