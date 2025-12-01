@@ -2,6 +2,21 @@ export function isKebabName(name: string): boolean {
 	return /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name);
 }
 
+export function collectTriggerElements(
+	target: Element,
+	prefix: string
+): Element[] {
+	const results: Element[] = [];
+	let current: Element | null = target;
+	while (current) {
+		if (current.matches(`[class^="${prefix}"], [class*=" ${prefix}"]`)) {
+			results.push(current);
+		}
+		current = current.parentElement;
+	}
+	return results;
+}
+
 export function getTriggerNames(el: Element, prefix: string): string[] {
 	const names: string[] = [];
 	el.classList.forEach((cls) => {

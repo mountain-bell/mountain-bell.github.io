@@ -4,11 +4,12 @@ import {
 	DomTriggerRunOptions,
 } from "./types";
 import {
-	getTriggerNames,
-	collectData,
 	isKebabName,
-	isElementCenterInView,
+	collectTriggerElements,
+	getTriggerNames,
 	UNCACHE_PARAM,
+	collectData,
+	isElementCenterInView,
 } from "./utils";
 import { Registry } from "./registry";
 
@@ -183,27 +184,40 @@ function listenDelegated(eventName: DomEventName) {
 			: null;
 		if (!target) return;
 
-		const el = target.closest(`[class^="${prefix}"], [class*=" ${prefix}"]`);
-		if (!el) return;
-
-		const attrPreventDefault = el.getAttribute(
-			`data-${eventName}-${EVENT_PARAM_PREVENT_DEFAULT}`
-		);
-		const shouldPreventDefault =
-			attrPreventDefault !== null && attrPreventDefault !== "false";
-		if (shouldPreventDefault) ev.preventDefault();
-
-		const attrStopPropagation = el.getAttribute(
-			`data-${eventName}-${EVENT_PARAM_STOP_PROPAGATION}`
-		);
-		const shouldStopPropagation =
-			attrStopPropagation !== null && attrStopPropagation !== "false";
-		if (shouldStopPropagation) ev.stopPropagation();
+		const elements = collectTriggerElements(target, prefix);
+		if (elements.length === 0) return;
 
 		if (eventName === "pointerdown") isTrackingPointer = true;
 
-		const names = getTriggerNames(el, prefix);
-		for (const name of names) invoke(name, el, ev);
+		let prevented = false;
+
+		for (const el of elements) {
+			if (!prevented) {
+				const attrPreventDefault = el.getAttribute(
+					`data-${eventName}-${EVENT_PARAM_PREVENT_DEFAULT}`
+				);
+				const shouldPreventDefault =
+					attrPreventDefault !== null && attrPreventDefault !== "false";
+				if (shouldPreventDefault) {
+					ev.preventDefault();
+					prevented = true;
+				}
+			}
+
+			const attrStopPropagation = el.getAttribute(
+				`data-${eventName}-${EVENT_PARAM_STOP_PROPAGATION}`
+			);
+			const shouldStopPropagation =
+				attrStopPropagation !== null && attrStopPropagation !== "false";
+
+			const names = getTriggerNames(el, prefix);
+			for (const name of names) invoke(name, el, ev);
+
+			if (shouldStopPropagation) {
+				ev.stopImmediatePropagation();
+				break;
+			}
+		}
 	});
 }
 
@@ -282,7 +296,7 @@ function setup() {
 	observeView();
 }
 
-function setupOnReady() {
+function setupOnReady(callback?: () => void) {
 	if (typeof document === "undefined") return;
 
 	const trySetup = () => {
@@ -291,6 +305,7 @@ function setupOnReady() {
 		} catch (e) {
 			console.error("[DomTrigger.setupOnReady] Failed to setup:", e);
 		}
+		if (typeof callback === "function") callback();
 	};
 
 	if (document.readyState === "loading") {
