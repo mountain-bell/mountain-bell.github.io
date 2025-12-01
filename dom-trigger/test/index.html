@@ -4,9 +4,137 @@
 		<meta charset="UTF-8" />
 		<title>dom-trigger テスト</title>
 	</head>
-	<body>
+	<body
+		class="js-load-set-log-page js-pageshow-set-log-page js-visibilitychange-set-log-page js-pagehide-set-log-page js-offline-set-log-page js-online-set-log-page"
+	>
 		<h1>dom-trigger テスト</h1>
 		<p>開発者ツールのコンソールを開いてください</p>
+		<button id="test-btn" data-set-log='{"id":4,"name":"invoke"}'>test</button>
+		<button id="test-btn-no-data">test-no-data</button>
+		<br />
+		<button class="js-click-set-log" data-set-log='{"id":6,"name":"click"}'>
+			js-click
+		</button>
+		<br />
+		<form
+			class="js-submit-set-log"
+			data-set-log='{"id":7,"name":"submit"}'
+			data-submit-prevent-default
+		>
+			<button type="submit">js-submit</button>
+			<input
+				class="js-change-set-log"
+				data-set-log='{"id":8,"name":"change"}'
+				placeholder="js-change"
+			/>
+			<input
+				class="js-input-set-log"
+				data-set-log='{"id":9,"name":"input"}'
+				placeholder="js-input"
+			/>
+		</form>
+		<input
+			class="js-focusin-set-log js-focusout-set-log-focusin-to-out"
+			data-set-log='{"id":10,"name":"focusin"}'
+			placeholder="js-focusin"
+		/>
+		<input
+			class="js-focusout-set-log"
+			data-set-log='{"id":12,"name":"focusout"}'
+			placeholder="js-focusout"
+		/>
+		<br />
+		<br />
+		<div
+			style="width: 100%; background-color: burlywood"
+			class="js-pointerdown-set-log-pointer js-pointermove-set-log-pointer js-pointerup-set-log-pointer js-pointercancel-set-log-pointer"
+		>
+			js-pointer
+		</div>
+		<br />
+		<div
+			id="test-animation"
+			class="js-transitionend-set-log-animation js-animationend-set-log-animation"
+		>
+			js-animation
+		</div>
+		<br />
+		<input
+			class="js-copy-set-log"
+			data-set-log='{"id":24,"name":"copy"}'
+			placeholder="js-copy"
+		/>
+		<input
+			class="js-paste-set-log"
+			data-set-log='{"id":25,"name":"paste"}'
+			placeholder="js-paste"
+		/>
+		<br />
+		<input
+			class="js-keydown-set-log"
+			data-set-log='{"id":26,"name":"keydown"}'
+			placeholder="js-keydown"
+		/>
+		<input
+			class="js-keyup-set-log"
+			data-set-log='{"id":27,"name":"keyup"}'
+			placeholder="js-keyup"
+		/>
+		<br />
+		<div
+			class="js-mouseover-set-log"
+			data-set-log='{"id":28,"name":"mouseover"}'
+		>
+			js-mouseover
+		</div>
+		<div class="js-mouseout-set-log" data-set-log='{"id":29,"name":"mouseout"}'>
+			js-mouseout
+		</div>
+		<div class="js-click-set-log" data-set-log='{"id":32,"name":"stop"}'>
+			<div
+				class="js-click-set-log"
+				data-set-log='{"id":31,"name":"stop"}'
+				data-click-stop-propagation
+			>
+				<button
+					class="js-click-set-log"
+					data-set-log='{"id":30,"name":"stop"}'
+					data-click-stop-propagation
+				>
+					stop
+				</button>
+			</div>
+		</div>
+		<div
+			style="
+				background-color: aqua;
+				height: 100px;
+				margin-bottom: 200px;
+				margin-top: 100px;
+			"
+			class="js-viewin-view-in-log js-viewout-view-out-log"
+			data-view-ratio="0.5"
+		>
+			view
+		</div>
+		<br />
+		<br />
+		<button class="js-click-get-log">get-log</button>
 		<script src="../dom-trigger.js"></script>
+		<script src="./test-all.js"></script>
+		<style>
+			#test-animation.animate {
+				animation: fadeIn 0.5s ease forwards;
+			}
+
+			@keyframes fadeIn {
+				from {
+					transform: translateY(20px);
+				}
+				to {
+					transform: translateY(0);
+				}
+			}
+		</style>
 	</body>
 </html>
