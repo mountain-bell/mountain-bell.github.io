@@ -27,7 +27,7 @@
 # 🧩 インストール
 
 ```bash
-npm install dom-trigger
+npm install @mountain-bell/dom-trigger
 ```
 
 ---
@@ -37,7 +37,7 @@ npm install dom-trigger
 ## 1. ハンドラを登録
 
 ```ts
-import DomTrigger from "dom-trigger";
+import DomTrigger from "@mountain-bell/dom-trigger";
 
 DomTrigger.use("fade-in", ({ el, data, ctx }) => {
 	el?.classList.add("is-visible");
