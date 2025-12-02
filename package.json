@@ -31,5 +31,8 @@
 	"bugs": {
 		"url": "https://github.com/mountain-bell/mountain-bell.github.io/issues"
 	},
-	"homepage": "https://github.com/mountain-bell/mountain-bell.github.io#readme"
+	"homepage": "https://github.com/mountain-bell/mountain-bell.github.io#readme",
+	"dependencies": {
+		"@mountain-bell/dom-trigger": "^0.1.0"
+	}
 }
