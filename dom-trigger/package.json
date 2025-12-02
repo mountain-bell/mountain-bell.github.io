@@ -1,6 +1,25 @@
 {
 	"name": "@mountain-bell/dom-trigger",
-	"version": "0.1.1",
+	"version": "0.1.2",
+	"description": "HTML のクラス名だけで UI 挙動を記述できる軽量 DOM トリガーライブラリ",
+	"license": "MIT",
+	"author": {
+		"name": "mountain-bell",
+		"url": "https://github.com/mountain-bell"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mountain-bell/mountain-bell.github.io.git",
+		"directory": "dom-trigger"
+	},
+	"keywords": [
+		"dom",
+		"trigger",
+		"event",
+		"javascript",
+		"html",
+		"ui"
+	],
 	"type": "module",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",
