@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>画面遷移</title>
+		<link rel="stylesheet" href="../common/style.css" />
+		<script type="text/javascript" src="../common/jquery-3.7.1.min.js"></script>
+		<script type="text/javascript" src="../common/common.js"></script>
+		<script type="text/javascript" src="screen-transition.js"></script>
+	</head>
+	<body>
+		<header></header>
+		<div class="container">
+			<h1>画面遷移</h1>
+			<h2>送信先URL</h2>
+			<table class="input_table">
+				<tbody>
+					<tr>
+						<td>
+							<input type="text" id="input_url" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>送信パラメータ</h2>
+			<form>
+				<table class="input_table">
+					<tbody>
+						<tr>
+							<td>PARAM'S NAME</td>
+							<td>PARAM'S VALUE</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="text" id="input_name-0" />
+							</td>
+							<td>
+								<input type="text" id="input_value-0" />
+							</td>
+						</tr>
+					</tbody>
+					<tbody id="tbody_add_param"></tbody>
+				</table>
+			</form>
+			<div class="button_area">
+				<button type="button" class="button_small" id="button_add_param">
+					パラメータ追加
+				</button>
+				<button type="button" class="button_small" id="button_clear">
+					クリア
+				</button>
+			</div>
+			<div class="button_area center">
+				<button type="button" id="button_method_post">POST送信</button>
+				<button type="button" id="button_method_get">GET送信</button>
+			</div>
+		</div>
+		<footer></footer>
+	</body>
+</html>
