@@ -68,6 +68,46 @@
 		}
 
 		//----------------------------------------
+		// サブミット制御
+		//----------------------------------------
+		let loading = true;
+		$(document).submit(function () {
+			$("button").prop("disabled", true);
+			if (loading) {
+				// フォームのパラメータを表示
+				let param = JSON.stringify($("form").serializeArray());
+				$("body").append(
+					`<div class="loading">
+						<div id="now_loading">
+							Now Loading
+						</div>
+						<div>
+							Param:${param}
+						</div>
+					</div>`
+				);
+				// ローディング演出
+				setTimeout(function () {
+					$("#now_loading").append(".");
+					setTimeout(function () {
+						$("#now_loading").append(".");
+						setTimeout(function () {
+							$("#now_loading").append(".");
+							setTimeout(function () {
+								loading = false;
+								$("form").off("submit");
+								$("form").submit();
+							}, 500);
+						}, 500);
+					}, 500);
+				}, 500);
+				return false;
+			} else {
+				$(".loading").remove();
+			}
+		});
+
+		//----------------------------------------
 		// 画面遷移機能取得
 		//----------------------------------------
 		function getFunction(id) {
