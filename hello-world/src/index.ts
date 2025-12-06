@@ -3,7 +3,7 @@ import {
 	assertLocationType,
 	calculateDate,
 	calculateOffsetHours,
-	getLocalTimeZone,
+	resolveTimeZone,
 } from "./utils";
 
 const LOCATION_DEF_MAP: Record<LocationType, LocationDef> = {
@@ -107,11 +107,15 @@ const LOCATION_DEF_MAP: Record<LocationType, LocationDef> = {
 	},
 };
 
-function get(location: LocationType = "local"): LocationInfo {
+function getDef(location: LocationType): LocationDef {
 	assertLocationType(location);
-	const def = LOCATION_DEF_MAP[location];
+	return LOCATION_DEF_MAP[location];
+}
+
+function get(location: LocationType = "local"): LocationInfo {
+	const def = getDef(location);
 	const greet = def.greet;
-	const timeZone = location === "local" ? getLocalTimeZone() : def.timeZone;
+	const timeZone = resolveTimeZone(location, def.timeZone);
 	const localDate = new Date();
 	const date = calculateDate(location, localDate, timeZone);
 	const offsetHours = calculateOffsetHours(location, localDate, date);
@@ -125,23 +129,16 @@ function get(location: LocationType = "local"): LocationInfo {
 }
 
 function getGreet(location: LocationType = "local") {
-	assertLocationType(location);
-	return LOCATION_DEF_MAP[location].greet;
+	return getDef(location).greet;
 }
 
 function getTimeZone(location: LocationType = "local") {
-	assertLocationType(location);
-	return location === "local"
-		? getLocalTimeZone()
-		: LOCATION_DEF_MAP[location].timeZone;
+	const timeZone = getDef(location).timeZone;
+	return resolveTimeZone(location, timeZone);
 }
 
 function getDate(location: LocationType = "local") {
-	assertLocationType(location);
-	const timeZone =
-		location === "local"
-			? getLocalTimeZone()
-			: LOCATION_DEF_MAP[location].timeZone;
+	const timeZone = getDef(location).timeZone;
 	const localDate = new Date();
 	return calculateDate(location, localDate, timeZone);
 }

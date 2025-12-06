@@ -13,8 +13,13 @@ export function assertLocationType(location: LocationType): void {
 	}
 }
 
-export function getLocalTimeZone(): string | undefined {
-	return Intl.DateTimeFormat().resolvedOptions().timeZone;
+export function resolveTimeZone(
+	location: LocationType,
+	timeZone: string | undefined
+) {
+	return location === "local"
+		? Intl.DateTimeFormat().resolvedOptions().timeZone
+		: timeZone;
 }
 
 export function calculateDate(
