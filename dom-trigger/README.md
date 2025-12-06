@@ -13,7 +13,7 @@
 
 ---
 
-# ✨ 特徴
+## ✨ 特徴
 
 - **HTML にクラス名を書くとイベントが自動で紐づく**
 - **1 トリガー ＝ 1 ハンドラ** というシンプルな構造
@@ -24,7 +24,7 @@
 
 ---
 
-# 🧩 インストール
+## 🧩 インストール
 
 ```bash
 npm install @mountain-bell/dom-trigger
@@ -32,9 +32,9 @@ npm install @mountain-bell/dom-trigger
 
 ---
 
-# 🚀 基本の使い方
+## 🚀 基本の使い方
 
-## 1. ハンドラを登録
+### 1. ハンドラを登録
 
 ```ts
 import DomTrigger from "@mountain-bell/dom-trigger";
@@ -54,7 +54,7 @@ DomTrigger.use("fade-in", ({ el, data, ctx }) => {
 
 ---
 
-## 2. HTML のクラスにトリガーを書く
+### 2. HTML のクラスにトリガーを書く
 
 ```html
 <div class="js-viewin-fade-in"></div>
@@ -64,7 +64,7 @@ DomTrigger.use("fade-in", ({ el, data, ctx }) => {
 
 ---
 
-## 3. 初期化
+### 3. 初期化
 
 ```ts
 DomTrigger.setupOnReady();
@@ -75,7 +75,7 @@ DomTrigger.setupOnReady();
 
 ---
 
-# 🗂️ Data 属性について
+## 🗂️ Data 属性について
 
 DomTrigger では、`data-ハンドラ名` に JSON を記述することで、  
 ハンドラに任意のデータを渡すことができます。
@@ -95,7 +95,7 @@ DomTrigger.use("track", ({ data }) => {
 });
 ```
 
-### 💡 キャッシュについて
+#### 💡 キャッシュについて
 
 DomTrigger は JSON パース結果を WeakMap にキャッシュし、
 同じ要素に何度も触れる際のパフォーマンスを最適化しています。
@@ -114,7 +114,7 @@ DomTrigger は JSON パース結果を WeakMap にキャッシュし、
 
 ---
 
-# 🧭 イベントの種類
+## 🧭 イベントの種類
 
 DomTrigger は、HTML のクラス名でイベントを表現します。
 イベントごとに（例: click / submit） `data-イベント名-prevent-default` / `data-イベント名-stop-propagation` を付けることで、`preventDefault()` や `stopPropagation()` を JavaScript ではなく HTML 側で制御できます。
@@ -132,7 +132,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟦 クリック / ポインターイベント
+### 🟦 クリック / ポインターイベント
 
 | イベント    | クラス接頭辞      | 例                     |
 | ----------- | ----------------- | ---------------------- |
@@ -145,7 +145,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟩 入力 / フォームイベント
+### 🟩 入力 / フォームイベント
 
 | イベント | 接頭辞       | 例                 |
 | -------- | ------------ | ------------------ |
@@ -155,7 +155,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟨 フォーカスイベント
+### 🟨 フォーカスイベント
 
 | イベント | 接頭辞         |
 | -------- | -------------- |
@@ -164,7 +164,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟧 キーボードイベント
+### 🟧 キーボードイベント
 
 | イベント | 接頭辞        |
 | -------- | ------------- |
@@ -175,7 +175,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟫 マウスイベント
+### 🟫 マウスイベント
 
 | イベント  | 接頭辞          |
 | --------- | --------------- |
@@ -186,7 +186,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟪 ページ / ライフサイクル
+### 🟪 ページ / ライフサイクル
 
 | イベント         | 接頭辞                 |
 | ---------------- | ---------------------- |
@@ -199,7 +199,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟦 ネットワーク
+### 🟦 ネットワーク
 
 | イベント | 接頭辞        |
 | -------- | ------------- |
@@ -210,7 +210,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-## 🟩 クリップボード
+### 🟩 クリップボード
 
 | イベント | 接頭辞      |
 | -------- | ----------- |
@@ -219,7 +219,7 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-# 👁️ VIEW トリガー
+## 👁️ VIEW トリガー
 
 ビュー判定は **IntersectionObserver** により監視しています。
 
@@ -234,54 +234,54 @@ DomTrigger は、HTML のクラス名でイベントを表現します。
 
 ---
 
-# 🛠 API
+## 🛠️ API
 
-## `DomTrigger.use(name, handler)`
+### `DomTrigger.use(name, handler)`
 
 トリガー登録。
 
-## `DomTrigger.run(name, options?)`
+### `DomTrigger.run(name, options?)`
 
 任意で起動。
 
-## `DomTrigger.invoke(name, el, event?)`
+### `DomTrigger.invoke(name, el, event?)`
 
 特定要素に対して発火。
 
-## `DomTrigger.listen()`
+### `DomTrigger.listen()`
 
 View トリガー以外のトリガーを監視開始。
 
-## `DomTrigger.observeView()`
+### `DomTrigger.observeView()`
 
 View トリガーを監視開始。
 
-## `DomTrigger.unuse(name)`
+### `DomTrigger.unuse(name)`
 
 トリガー削除。
 
-## `DomTrigger.clear()`
+### `DomTrigger.clear()`
 
 トリガー登録を全消去。
 
-## `DomTrigger.setup()`
+### `DomTrigger.setup()`
 
 全トリガーを監視開始。
 
-## `DomTrigger.setupOnReady()`
+### `DomTrigger.setupOnReady()`
 
 DOMContentLoaded 後に setup。
 
 ---
 
-# 📄 ライセンス
+## 📄 ライセンス
 
 MIT
 © 2025 mountain-bell
 
 ---
 
-# 👤 作者
+## 👤 作者
 
 Created by
 [mountain-bell](https://github.com/mountain-bell) (a.k.a. MB)

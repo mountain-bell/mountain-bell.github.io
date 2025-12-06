@@ -10,7 +10,7 @@
 
 ---
 
-# ✨ 特徴
+## ✨ 特徴
 
 - 🌍 **国ごとに異なる「Hello, World!」を返す**
 - 🕒 **タイムゾーン・日付・時差（オフセット）も取得可能**
@@ -19,7 +19,7 @@
 
 ---
 
-# 🧩 インストール
+## 🧩 インストール
 
 ```bash
 npm install @mountain-bell/hello-world
@@ -27,9 +27,9 @@ npm install @mountain-bell/hello-world
 
 ---
 
-# 🚀 基本の使い方
+## 🚀 基本の使い方
 
-## 1. デフォルト namespace で使う
+### 1. Default Import
 
 ```ts
 import HelloWorld from "@mountain-bell/hello-world";
@@ -44,7 +44,7 @@ console.log(info.offsetHours); // 時差
 
 ---
 
-## 2. named import で使う（ツリーシェイク対応）
+### 2. Named Import
 
 ```ts
 import { getGreet, getTimeZone } from "@mountain-bell/hello-world";
@@ -58,7 +58,7 @@ getTimeZone("usa");
 
 ---
 
-# 🌍 対応している主要国
+## 🌍 対応している主要国
 
 | 国               | LocationType   | 挨拶                |
 | ---------------- | -------------- | ------------------- |
@@ -89,9 +89,9 @@ getTimeZone("usa");
 
 ---
 
-# 🛠 API
+## 🛠️ API
 
-## `HelloWorld.get(location?)`
+### `HelloWorld.get(location?)`
 
 挨拶・タイムゾーン・日付・時差（offsetHours）をまとめて返します。
 
@@ -101,7 +101,7 @@ HelloWorld.get("spain");
 
 ---
 
-## `getGreet(location?)`
+### `getGreet(location?)`
 
 国の挨拶文を取得。
 
@@ -111,25 +111,25 @@ getGreet("germany"); // "Hallo, Welt!"
 
 ---
 
-## `getTimeZone(location?)`
+### `getTimeZone(location?)`
 
 タイムゾーンを取得。
 
 ---
 
-## `getDate(location?)`
+### `getDate(location?)`
 
 指定国の現在日時を取得。
 
 ---
 
-## `getOffsetHours(location?)`
+### `getOffsetHours(location?)`
 
 ローカルとの時差を取得。
 
 ---
 
-# ℹ️ location の省略について
+## ℹ️ location の省略について
 
 HelloWorld の各 API は、`location` を省略した場合や `"local"` を指定した場合、  
 **現在の端末（ローカル環境）のタイムゾーンと日時を基準にした情報を返します。**
@@ -146,14 +146,14 @@ getOffsetHours(); // 0
 
 ---
 
-# 📄 ライセンス
+## 📄 ライセンス
 
 MIT
 © 2025 mountain-bell
 
 ---
 
-# 👤 作者
+## 👤 作者
 
 Created by
 [mountain-bell](https://github.com/mountain-bell) (a.k.a. MB)

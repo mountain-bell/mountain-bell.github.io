@@ -1,6 +1,6 @@
 {
 	"name": "@mountain-bell/hello-world",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "国ごとの「Hello, World!」とタイムゾーン情報を返す軽量ライブラリ — It says Hello for you!",
 	"license": "MIT",
 	"author": {
