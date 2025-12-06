@@ -36,6 +36,7 @@
 	},
 	"homepage": "https://github.com/mountain-bell/mountain-bell.github.io#readme",
 	"dependencies": {
-		"@mountain-bell/dom-trigger": "^0.1.0"
+		"@mountain-bell/dom-trigger": "^0.1.0",
+		"@mountain-bell/hello-world": "^0.1.0"
 	}
 }
