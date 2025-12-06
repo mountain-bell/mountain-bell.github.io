@@ -32,7 +32,9 @@ export function calculateOffsetHours(
 	localDate: Date,
 	date: Date
 ) {
-	return location === "local"
-		? 0
-		: (date.getTime() - localDate.getTime()) / (1000 * 60 * 60);
+	if (location === "local") return 0;
+	const diffMs = date.getTime() - localDate.getTime();
+	const diffMinutes = Math.round(diffMs / (1000 * 60));
+	const offset = diffMinutes / 60;
+	return Object.is(offset, -0) ? 0 : offset;
 }
