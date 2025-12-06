@@ -13,12 +13,12 @@
 		"directory": "hello-world"
 	},
 	"keywords": [
-		"dom",
-		"trigger",
-		"event",
-		"javascript",
-		"html",
-		"ui"
+		"hello",
+		"world",
+		"timezone",
+		"datetime",
+		"offset",
+		"javascript"
 	],
 	"type": "module",
 	"main": "./dist/index.cjs",
