@@ -9,7 +9,7 @@ import {
 const LOCATION_DEF_MAP: Record<LocationType, LocationDef> = {
 	local: {
 		greet: "Hello, World!",
-		timeZone: getLocalTimeZone(),
+		timeZone: undefined,
 	},
 	// Asia
 	japan: {
@@ -111,7 +111,7 @@ function get(location: LocationType = "local"): LocationInfo {
 	assertLocationType(location);
 	const def = LOCATION_DEF_MAP[location];
 	const greet = def.greet;
-	const timeZone = def.timeZone;
+	const timeZone = location === "local" ? getLocalTimeZone() : def.timeZone;
 	const localDate = new Date();
 	const date = calculateDate(location, localDate, timeZone);
 	const offsetHours = calculateOffsetHours(location, localDate, date);
@@ -131,14 +131,22 @@ function getGreet(location: LocationType = "local") {
 
 function getTimeZone(location: LocationType = "local") {
 	assertLocationType(location);
-	return LOCATION_DEF_MAP[location].timeZone;
+	return location === "local"
+		? getLocalTimeZone()
+		: LOCATION_DEF_MAP[location].timeZone;
 }
 
-function getDate(location?: LocationType) {
-	return get(location).date;
+function getDate(location: LocationType = "local") {
+	assertLocationType(location);
+	const timeZone =
+		location === "local"
+			? getLocalTimeZone()
+			: LOCATION_DEF_MAP[location].timeZone;
+	const localDate = new Date();
+	return calculateDate(location, localDate, timeZone);
 }
 
-function getOffsetHours(location?: LocationType) {
+function getOffsetHours(location: LocationType = "local") {
 	return get(location).offsetHours;
 }
 
