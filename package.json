@@ -4,7 +4,8 @@
 	"private": true,
 	"workspaces": [
 		"sample",
-		"dom-trigger"
+		"dom-trigger",
+		"hello-world"
 	],
 	"devDependencies": {
 		"dts-bundle-generator": "^9.5.1",
@@ -19,7 +20,9 @@
 		"build:sample": "npm run -w sample build",
 		"dev:sample": "npm run -w sample dev",
 		"build:dom-trigger": "npm run -w dom-trigger build",
-		"dev:dom-trigger": "npm run -w dom-trigger dev"
+		"dev:dom-trigger": "npm run -w dom-trigger dev",
+		"build:hello-world": "npm run -w hello-world build",
+		"dev:hello-world": "npm run -w hello-world dev"
 	},
 	"repository": {
 		"type": "git",
