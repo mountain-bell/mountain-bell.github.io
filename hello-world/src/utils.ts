@@ -22,9 +22,24 @@ export function calculateDate(
 	localDate: Date,
 	timeZone: string | undefined
 ) {
-	return location === "local"
-		? localDate
-		: new Date(localDate.toLocaleString("en-US", { timeZone }));
+	if (location === "local") return localDate;
+	const formatter = new Intl.DateTimeFormat("en-US", {
+		timeZone,
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+		hour12: false,
+	});
+	const parts = formatter.formatToParts(localDate);
+	const get = (type: Intl.DateTimeFormatPartTypes) =>
+		parts.find((p) => p.type === type)?.value ?? "00";
+	const iso = `${get("year")}-${get("month")}-${get("day")}T${get(
+		"hour"
+	)}:${get("minute")}:${get("second")}`;
+	return new Date(iso);
 }
 
 export function calculateOffsetHours(
