@@ -1,6 +1,4 @@
 {
-	"name": "mountain-bell.github.io",
-	"version": "1.0.0",
 	"private": true,
 	"workspaces": [
 		"sample",
@@ -24,17 +22,6 @@
 		"build:hello-world": "npm run -w hello-world build",
 		"dev:hello-world": "npm run -w hello-world dev"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/mountain-bell/mountain-bell.github.io.git"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/mountain-bell/mountain-bell.github.io/issues"
-	},
-	"homepage": "https://github.com/mountain-bell/mountain-bell.github.io#readme",
 	"dependencies": {
 		"@mountain-bell/dom-trigger": "^0.1.0",
 		"@mountain-bell/hello-world": "^0.1.0"
