@@ -8,7 +8,7 @@
 
 という、“HTML 主導の UI 設計”を実現します。
 
-**小さくて直感的、そして高速。
+**小さくて直感的、そして高速。  
 フレームワークを使わないサイトでも、気持ちよくインタラクションを実装できます。**
 
 ---
@@ -70,7 +70,7 @@ DomTrigger.use("fade-in", ({ el, data, ctx }) => {
 DomTrigger.setupOnReady();
 ```
 
-これで DomTrigger の全イベント監視が自動開始します。
+これで DomTrigger の全イベント監視が自動開始します。  
 引数にコールバック関数を渡すことで、イベントの監視後に発火させたい処理をコントロールできます。
 
 ---
@@ -97,7 +97,7 @@ DomTrigger.use("track", ({ data }) => {
 
 #### 💡 キャッシュについて
 
-DomTrigger は JSON パース結果を WeakMap にキャッシュし、
+DomTrigger は JSON パース結果を WeakMap にキャッシュし、  
 同じ要素に何度も触れる際のパフォーマンスを最適化しています。
 
 値を再パースしたい場合は `data-uncache-ハンドラ名` を付けます。
@@ -116,7 +116,7 @@ DomTrigger は JSON パース結果を WeakMap にキャッシュし、
 
 ## 🧭 イベントの種類
 
-DomTrigger は、HTML のクラス名でイベントを表現します。
+DomTrigger は、HTML のクラス名でイベントを表現します。  
 イベントごとに（例: click / submit） `data-イベント名-prevent-default` / `data-イベント名-stop-propagation` を付けることで、`preventDefault()` や `stopPropagation()` を JavaScript ではなく HTML 側で制御できます。
 
 例：
@@ -276,7 +276,7 @@ DOMContentLoaded 後に setup。
 
 ## 📄 ライセンス
 
-MIT
+MIT  
 © 2025 mountain-bell
 
 ---
