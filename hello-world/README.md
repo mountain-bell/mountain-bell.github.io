@@ -67,23 +67,23 @@ getTimeZone("usa");
 | 中国             | `china`        | 你好，世界！        |
 | 台湾             | `taiwan`       | 哈囉，世界！        |
 | 香港             | `hong_kong`    | 你好，世界！        |
-| シンガポール     | `singapore`    | Hello, world!       |
-| インド           | `india`        | Hello, world!       |
-| 英国             | `uk`           | Hello, world!       |
+| シンガポール     | `singapore`    | Hello, World!       |
+| インド           | `india`        | Hello, World!       |
+| 英国             | `uk`           | Hello, World!       |
 | フランス         | `france`       | Bonjour, le monde ! |
 | ドイツ           | `germany`      | Hallo, Welt!        |
 | スペイン         | `spain`        | ¡Hola, mundo!       |
 | イタリア         | `italy`        | Ciao, mondo!        |
 | オランダ         | `netherlands`  | Hallo, wereld!      |
 | スウェーデン     | `sweden`       | Hej, världen!       |
-| アメリカ         | `usa`          | Hello, world!       |
-| カナダ           | `canada`       | Hello, world!       |
+| アメリカ         | `usa`          | Hello, World!       |
+| カナダ           | `canada`       | Hello, World!       |
 | メキシコ         | `mexico`       | ¡Hola, mundo!       |
 | ブラジル         | `brazil`       | Olá, mundo!         |
 | アルゼンチン     | `argentina`    | ¡Hola, mundo!       |
-| オーストラリア   | `australia`    | Hello, world!       |
-| ニュージーランド | `new_zealand`  | Hello, world!       |
-| 南アフリカ       | `south_africa` | Hello, world!       |
+| オーストラリア   | `australia`    | Hello, World!       |
+| ニュージーランド | `new_zealand`  | Hello, World!       |
+| 南アフリカ       | `south_africa` | Hello, World!       |
 
 ※ 全世界分を網羅しておらず、一部の国のみ対応しています。少し不完全ですが、楽しんでいただけたら嬉しいです。
 

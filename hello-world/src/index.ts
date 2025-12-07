@@ -33,16 +33,16 @@ const LOCATION_DEF_MAP: Record<LocationType, LocationDef> = {
 		timeZone: "Asia/Hong_Kong",
 	},
 	singapore: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "Asia/Singapore",
 	},
 	india: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "Asia/Kolkata",
 	},
 	// Europe
 	uk: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "Europe/London",
 	},
 	france: {
@@ -71,11 +71,11 @@ const LOCATION_DEF_MAP: Record<LocationType, LocationDef> = {
 	},
 	// North America
 	usa: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "America/New_York",
 	},
 	canada: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "America/Toronto",
 	},
 	mexico: {
@@ -93,16 +93,16 @@ const LOCATION_DEF_MAP: Record<LocationType, LocationDef> = {
 	},
 	// Oceania
 	australia: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "Australia/Sydney",
 	},
 	new_zealand: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "Pacific/Auckland",
 	},
 	// Africa
 	south_africa: {
-		greet: "Hello, world!",
+		greet: "Hello, World!",
 		timeZone: "Africa/Johannesburg",
 	},
 };
