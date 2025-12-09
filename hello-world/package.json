@@ -1,6 +1,6 @@
 {
 	"name": "@mountain-bell/hello-world",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "国ごとの「Hello, World!」とタイムゾーン情報を返す軽量ライブラリ — It says Hello for you!",
 	"license": "MIT",
 	"author": {
@@ -12,13 +12,17 @@
 		"url": "https://github.com/mountain-bell/mountain-bell.github.io.git",
 		"directory": "hello-world"
 	},
+	"homepage": "https://x.com/mountain_bell",
 	"keywords": [
 		"hello",
 		"world",
 		"timezone",
 		"datetime",
 		"offset",
-		"javascript"
+		"javascript",
+		"js",
+		"typescript",
+		"ts"
 	],
 	"type": "module",
 	"main": "./dist/index.cjs",
