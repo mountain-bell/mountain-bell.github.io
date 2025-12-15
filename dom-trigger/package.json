@@ -1,6 +1,6 @@
 {
 	"name": "@mountain-bell/dom-trigger",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "HTML のクラス名だけで UI 挙動を記述できる軽量 DOM トリガーライブラリ",
 	"license": "MIT",
 	"author": {
@@ -45,9 +45,9 @@
 	"scripts": {
 		"clean": "rimraf dist types-tmp dom-trigger.js dom-trigger.js.map",
 		"build:ts": "tsc -p tsconfig.json",
-		"build:npm": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --sourcemap --minify",
-		"build:npm:esm": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.mjs --sourcemap --minify",
-		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomTrigger --outfile=dom-trigger.js --sourcemap --minify --footer:js=\"DomTrigger = DomTrigger.default || DomTrigger;\"",
+		"build:npm": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\"",
+		"build:npm:esm": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.mjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\"",
+		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomTrigger --outfile=dom-trigger.js --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\" --footer:js=\"DomTrigger = DomTrigger.default || DomTrigger;\"",
 		"build:types:raw": "tsc -p tsconfig.types.json",
 		"build:types:bundle": "dts-bundle-generator -o dist/index.d.ts types-tmp/index.d.ts",
 		"build:types:clean": "rimraf types-tmp",

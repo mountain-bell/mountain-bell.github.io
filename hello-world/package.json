@@ -1,6 +1,6 @@
 {
 	"name": "@mountain-bell/hello-world",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"description": "国ごとの「Hello, World!」とタイムゾーン情報を返す軽量ライブラリ — It says Hello for you!",
 	"license": "MIT",
 	"author": {
@@ -45,9 +45,9 @@
 	"scripts": {
 		"clean": "rimraf dist types-tmp hello-world.js hello-world.js.map",
 		"build:ts": "tsc -p tsconfig.json",
-		"build:npm": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --sourcemap --minify",
-		"build:npm:esm": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.mjs --sourcemap --minify",
-		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=HelloWorld --outfile=hello-world.js --sourcemap --minify --footer:js=\"HelloWorld = HelloWorld.default || HelloWorld;\"",
+		"build:npm": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\"",
+		"build:npm:esm": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.mjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\"",
+		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=HelloWorld --outfile=hello-world.js --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\" --footer:js=\"HelloWorld = HelloWorld.default || HelloWorld;\"",
 		"build:types:raw": "tsc -p tsconfig.types.json",
 		"build:types:bundle": "dts-bundle-generator -o dist/index.d.ts types-tmp/index.d.ts",
 		"build:types:clean": "rimraf types-tmp",
