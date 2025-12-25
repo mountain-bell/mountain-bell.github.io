@@ -153,7 +153,7 @@ const HelloWorld = {
 	getTimeZone,
 	getDate,
 	getOffsetHours,
-};
+} as const;
 
 export { get, getGreet, getTimeZone, getDate, getOffsetHours };
 

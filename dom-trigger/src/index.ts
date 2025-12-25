@@ -371,7 +371,7 @@ const DomTrigger = {
 	clear,
 	setup,
 	setupOnReady,
-};
+} as const;
 
 export {
 	use,

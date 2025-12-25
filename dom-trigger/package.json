@@ -1,6 +1,6 @@
 {
 	"name": "@mountain-bell/dom-trigger",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "HTML のクラス名だけで UI 挙動を記述できる軽量 DOM トリガーライブラリ",
 	"license": "MIT",
 	"author": {
