@@ -373,4 +373,16 @@ const DomTrigger = {
 	setupOnReady,
 };
 
+export {
+	use,
+	run,
+	invoke,
+	listen,
+	observeView,
+	unuse,
+	clear,
+	setup,
+	setupOnReady,
+};
+
 export default DomTrigger;

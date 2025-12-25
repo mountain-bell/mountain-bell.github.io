@@ -45,6 +45,8 @@ DomTrigger.use("fade-in", ({ el, data, ctx }) => {
 });
 ```
 
+※ named import でも利用できます。
+
 受け取る値：
 
 - `el`： 対象要素
