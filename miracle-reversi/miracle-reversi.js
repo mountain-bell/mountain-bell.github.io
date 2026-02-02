@@ -719,9 +719,9 @@
 		// 実行
 		function execSuper() {
 			openModal(`スーパー・リバーシ・アタック！`, true);
-			let turn_now = turn;
+			const turn_now = turn;
 			// 乱数により反転マーキングする場所を変える
-			let random = Math.floor(Math.random() * 11);
+			const random = Math.floor(Math.random() * 11);
 			if (random == 0) {
 				turnOverRightUnder(8, 0, 0);
 				turnOverRightUp(8, 9, 0);
@@ -785,7 +785,7 @@
 		// 実行
 		function execDouble() {
 			openModal(`ダブル・アタック！`, true);
-			let turn_now = turn;
+			const turn_now = turn;
 			// ダブル・アタックフラグを立てる
 			double_flag = true;
 			// 特殊効果非活性処理（遅延あり）
@@ -832,12 +832,12 @@
 		// 実行
 		function execMiracle() {
 			openModal(`ミラクル・タイム！`, true);
-			let turn_now = turn;
+			const turn_now = turn;
 			// 乱数により継続するか決める
-			let random = Math.floor(Math.random() * 4);
+			const random = Math.floor(Math.random() * 4);
 			// 乱数により反転マーキングする場所を決める
-			let y = Math.floor(Math.random() * 8) + 1;
-			let x = Math.floor(Math.random() * 8) + 1;
+			const y = Math.floor(Math.random() * 8) + 1;
+			const x = Math.floor(Math.random() * 8) + 1;
 			$(`#piece_${y}-${x}`).val(turn);
 			$(`#piece_${y}-${x}`).addClass("turn_over");
 			// ひっくり返す処理と特殊効果非活性処理（遅延あり）
@@ -872,10 +872,10 @@
 		// 継続実行
 		function execMiracleKeep() {
 			// 乱数により継続するか決める
-			let random = Math.floor(Math.random() * 3);
+			const random = Math.floor(Math.random() * 3);
 			// 乱数により反転マーキングする場所を決める
-			let y = Math.floor(Math.random() * 8) + 1;
-			let x = Math.floor(Math.random() * 8) + 1;
+			const y = Math.floor(Math.random() * 8) + 1;
+			const x = Math.floor(Math.random() * 8) + 1;
 			$(`#piece_${y}-${x}`).val(turn);
 			$(`#piece_${y}-${x}`).addClass("turn_over_miracle");
 			// ひっくり返す処理

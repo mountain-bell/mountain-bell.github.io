@@ -38,7 +38,7 @@
 		// POST送信
 		//----------------------------------------
 		function buttonMethodPost() {
-			let form = $("#button_method_post").parents(".container").find("form");
+			const form = $("#button_method_post").parents(".container").find("form");
 			form.attr("method", "post");
 			form.attr("action", $("#input_url").val());
 			setParam();
@@ -49,7 +49,7 @@
 		// GET送信
 		//----------------------------------------
 		function buttonMethodGet() {
-			let form = $("#button_method_get").parents(".container").find("form");
+			const form = $("#button_method_get").parents(".container").find("form");
 			form.attr("method", "get");
 			form.attr("action", $("#input_url").val());
 			setParam();
@@ -61,8 +61,8 @@
 		//----------------------------------------
 		function setParam() {
 			for (let i = 0; i <= count; i++) {
-				let nameId = `#input_name-${i}`;
-				let valueId = `#input_value-${i}`;
+				const nameId = `#input_name-${i}`;
+				const valueId = `#input_value-${i}`;
 				$(valueId).attr("name", $(nameId).val());
 			}
 		}
@@ -75,7 +75,7 @@
 			$("button").prop("disabled", true);
 			if (loading) {
 				// フォームのパラメータを表示
-				let param = JSON.stringify($("form").serializeArray());
+				const param = JSON.stringify($("form").serializeArray());
 				$("body").append(
 					`<div class="loading">
 						<div id="now_loading">

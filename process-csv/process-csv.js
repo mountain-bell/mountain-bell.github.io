@@ -23,7 +23,7 @@
 		// ドロップ
 		$("#drop_area").on("drop", function (event) {
 			event.preventDefault();
-			let files = event.originalEvent.dataTransfer.files;
+			const files = event.originalEvent.dataTransfer.files;
 			$("#upfile_disp").val(files[0].name);
 			$("#upfile").prop("files", files);
 			// エラーメッセージ初期化
@@ -60,15 +60,16 @@
 		//----------------------------------------
 		function buttonProcessCsv() {
 			// 加工用変数を設定
-			let input_process = $("#input_process").val();
+			const input_process = $("#input_process").val();
 			let output_process = "";
 			// エラーメッセージ初期化
 			$(".error_msg").remove();
 			// ファイル選択用のinput要素からファイルを取得
 			const file = $("#upfile")[0].files[0];
 			if (!file) {
-				let error_msg = "ファイルが選択されていません！";
+				const error_msg = "ファイルが選択されていません！";
 				// ログに出力
+				// eslint-disable-next-line no-console
 				console.log(error_msg);
 				// エラーメッセージを表示
 				$(".error_message_area").append(
@@ -85,7 +86,7 @@
 				// ファイルの内容を取得
 				const contents = event.target.result;
 				// CSVファイルの行ごとに処理
-				let rows = contents.split("\n");
+				const rows = contents.split("\n");
 				// 行を回す
 				rows.forEach((row, rowIndex) => {
 					// 改行だけの行で置換処理を止める
@@ -97,12 +98,13 @@
 						// カラムを回す
 						cells.forEach((cell, columnIndex) => {
 							// カラム用変数を設定
-							let cell_no = "cell_" + (columnIndex + 1);
+							const cell_no = "cell_" + (columnIndex + 1);
 							// カラム置換用変数を設定
-							let cell_no_mark = `\{${cell_no}\}`;
+							const cell_no_mark = `{${cell_no}}`;
 							// カラムの値を変数に設定
 							window[cell_no] = cell;
 							// ログに出力
+							// eslint-disable-next-line no-console
 							console.log(
 								cell_no + " in row " + (rowIndex + 1) + ":",
 								window[cell_no]
