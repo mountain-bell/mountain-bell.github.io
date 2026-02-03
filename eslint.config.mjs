@@ -6,7 +6,7 @@ import globals from "globals";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
 	{
-		ignores: ["**/dist/**", "**/assets/vendor/**"],
+		ignores: ["**/dist/**", "**/browser/**", "**/vendor/**"],
 	},
 	js.configs.recommended,
 	...tseslint.configs.recommended.map((config) => ({
