@@ -26,6 +26,17 @@ class ChainElements {
 		this.elements.forEach((el) => el.classList.remove(...tokens));
 		return this;
 	}
+
+	toggleClass(...classNames: string[]): this {
+		const tokens = classNames
+			.flatMap((s) => s.split(/\s+/))
+			.filter((s) => s.length > 0);
+		if (tokens.length === 0) return this;
+		this.elements.forEach((el) => {
+			tokens.forEach((token) => el.classList.toggle(token));
+		});
+		return this;
+	}
 }
 
 function id(id: string): ChainElements {
