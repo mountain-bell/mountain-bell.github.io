@@ -1,4 +1,2 @@
 node_modules
-dom-trigger/dist
-hello-world/dist
-dom-chainer/dist
+**/dist
