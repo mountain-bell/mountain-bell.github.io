@@ -3,7 +3,8 @@
 	"workspaces": [
 		"sample",
 		"dom-trigger",
-		"hello-world"
+		"hello-world",
+		"dom-chainer"
 	],
 	"devDependencies": {
 		"@eslint/js": "^9.39.2",
@@ -28,7 +29,9 @@
 		"build:dom-trigger": "npm run -w dom-trigger build",
 		"dev:dom-trigger": "npm run -w dom-trigger dev",
 		"build:hello-world": "npm run -w hello-world build",
-		"dev:hello-world": "npm run -w hello-world dev"
+		"dev:hello-world": "npm run -w hello-world dev",
+		"build:dom-chainer": "npm run -w dom-chainer build",
+		"dev:dom-chainer": "npm run -w dom-chainer dev"
 	},
 	"dependencies": {
 		"@mountain-bell/dom-trigger": "^0.1.0",
