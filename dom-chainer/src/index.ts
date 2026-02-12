@@ -1,5 +1,6 @@
 class ChainElements {
 	private elements: Element[];
+	private enabled = true;
 
 	constructor(elements: Element[]) {
 		this.elements = elements;
@@ -9,7 +10,23 @@ class ChainElements {
 		return this.elements;
 	}
 
+	if(cond: boolean): this {
+		this.enabled = cond;
+		return this;
+	}
+
+	else(): this {
+		this.enabled = !this.enabled;
+		return this;
+	}
+
+	end(): this {
+		this.enabled = true;
+		return this;
+	}
+
 	addClass(...classNames: string[]): this {
+		if (!this.enabled) return this;
 		const tokens = classNames
 			.flatMap((s) => s.split(/\s+/))
 			.filter((s) => s.length > 0);
@@ -19,6 +36,7 @@ class ChainElements {
 	}
 
 	removeClass(...classNames: string[]): this {
+		if (!this.enabled) return this;
 		const tokens = classNames
 			.flatMap((s) => s.split(/\s+/))
 			.filter((s) => s.length > 0);
@@ -28,6 +46,7 @@ class ChainElements {
 	}
 
 	toggleClass(...classNames: string[]): this {
+		if (!this.enabled) return this;
 		const tokens = classNames
 			.flatMap((s) => s.split(/\s+/))
 			.filter((s) => s.length > 0);
