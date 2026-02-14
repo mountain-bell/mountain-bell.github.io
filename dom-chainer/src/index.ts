@@ -1,3 +1,5 @@
+import { tokenize } from "./utils";
+
 class ChainElements {
 	private elements: Element[];
 	private enabled = true;
@@ -27,33 +29,25 @@ class ChainElements {
 
 	addClass(...classNames: string[]): this {
 		if (!this.enabled) return this;
-		const tokens = classNames
-			.flatMap((s) => s.split(/\s+/))
-			.filter((s) => s.length > 0);
-		if (tokens.length === 0) return this;
-		this.elements.forEach((el) => el.classList.add(...tokens));
+		const tokens = tokenize(classNames);
+		if (tokens.length > 0) {
+			this.elements.forEach((el) => el.classList.add(...tokens));
+		}
 		return this;
 	}
 
 	removeClass(...classNames: string[]): this {
 		if (!this.enabled) return this;
-		const tokens = classNames
-			.flatMap((s) => s.split(/\s+/))
-			.filter((s) => s.length > 0);
-		if (tokens.length === 0) return this;
-		this.elements.forEach((el) => el.classList.remove(...tokens));
+		const tokens = tokenize(classNames);
+		if (tokens.length > 0) {
+			this.elements.forEach((el) => el.classList.remove(...tokens));
+		}
 		return this;
 	}
 
-	toggleClass(...classNames: string[]): this {
+	toggleClass(className: string, force?: boolean): this {
 		if (!this.enabled) return this;
-		const tokens = classNames
-			.flatMap((s) => s.split(/\s+/))
-			.filter((s) => s.length > 0);
-		if (tokens.length === 0) return this;
-		this.elements.forEach((el) => {
-			tokens.forEach((token) => el.classList.toggle(token));
-		});
+		this.elements.forEach((el) => el.classList.toggle(className, force));
 		return this;
 	}
 }
