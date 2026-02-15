@@ -27,6 +27,12 @@ class ChainElements {
 		return this;
 	}
 
+	tap(callback: (el: Element, index: number) => void): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el, i) => callback(el, i));
+		return this;
+	}
+
 	addClass(...classNames: string[]): this {
 		if (!this.enabled) return this;
 		const tokens = tokenize(classNames);
