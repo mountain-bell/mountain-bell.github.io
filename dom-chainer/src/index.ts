@@ -56,6 +56,31 @@ class ChainElements {
 		this.elements.forEach((el) => el.classList.toggle(className, force));
 		return this;
 	}
+
+	setAttr(name: string, value: string): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => el.setAttribute(name, value));
+		return this;
+	}
+
+	removeAttr(name: string): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => el.removeAttribute(name));
+		return this;
+	}
+
+	toggleAttr(name: string, value: string, force?: boolean): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => {
+			const shouldSet = force === undefined ? !el.hasAttribute(name) : force;
+			if (shouldSet) {
+				el.setAttribute(name, value);
+			} else {
+				el.removeAttribute(name);
+			}
+		});
+		return this;
+	}
 }
 
 function id(id: string): ChainElements {

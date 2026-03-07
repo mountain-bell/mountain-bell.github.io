@@ -27,4 +27,40 @@ DomChainer.id("description")
 	.addClass("should-be-added")
 	.end()
 	.addClass("final")
-	.tap((el) => console.log(el.classList.value));
+	.tap((el) => console.log(el.classList.value))
+	.tap(() => console.log("---- Attribute Tests ----"))
+	.setAttr("data-a", "1")
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("setAttr:", element.dataset.a);
+	})
+	.removeAttr("data-a")
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("removeAttr:", element.dataset.a);
+	})
+	.toggleAttr("data-b", "2") // add
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("toggleAttr on:", element.dataset.b);
+	})
+	.toggleAttr("data-b", "2") // remove
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("toggleAttr off:", element.dataset.b);
+	})
+	.setAttr("data-c", "existing") // ensure it exists
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("toggleAttr force on (before):", element.dataset.c);
+	})
+	.toggleAttr("data-c", "3", true) // force on (should overwrite)
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("toggleAttr force on (after):", element.dataset.c);
+	})
+	.toggleAttr("data-c", "3", false) // force off
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("toggleAttr force off:", element.dataset.c);
+	});
