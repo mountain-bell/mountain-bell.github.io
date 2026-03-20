@@ -28,7 +28,16 @@ DomChainer.id("description")
 	.end()
 	.addClass("final")
 	.tap((el) => console.log(el.classList.value))
-	.tap(() => console.log("---- Attribute Tests ----"))
+	.setStyle("color", "red")
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("setStyle:", element.style.color);
+	})
+	.removeStyle("color")
+	.tap((el) => {
+		const element = el as HTMLElement;
+		console.log("removeStyle:", element.style.color);
+	})
 	.setAttr("data-a", "1")
 	.tap((el) => {
 		const element = el as HTMLElement;
@@ -39,28 +48,21 @@ DomChainer.id("description")
 		const element = el as HTMLElement;
 		console.log("removeAttr:", element.dataset.a);
 	})
-	.toggleAttr("data-b", "2") // add
+	.html("<span>New HTML</span>")
+	.tap((el) => console.log("html:", el.innerHTML))
+	.text("New Text")
+	.tap((el) => console.log("text:", el.textContent))
+	.append(" [", "Appended", "]")
+	.prepend("[", "Prepended", "] ")
+	.tap((el) => console.log("append prepend:", el.textContent))
+	.before("[", "Before", "]")
+	.after("[", "After", "]")
+	.empty();
+
+DomChainer.id("input")
+	.val("New Value")
 	.tap((el) => {
-		const element = el as HTMLElement;
-		console.log("toggleAttr on:", element.dataset.b);
+		const element = el as HTMLInputElement;
+		console.log("val:", element.value);
 	})
-	.toggleAttr("data-b", "2") // remove
-	.tap((el) => {
-		const element = el as HTMLElement;
-		console.log("toggleAttr off:", element.dataset.b);
-	})
-	.setAttr("data-c", "existing") // ensure it exists
-	.tap((el) => {
-		const element = el as HTMLElement;
-		console.log("toggleAttr force on (before):", element.dataset.c);
-	})
-	.toggleAttr("data-c", "3", true) // force on (should overwrite)
-	.tap((el) => {
-		const element = el as HTMLElement;
-		console.log("toggleAttr force on (after):", element.dataset.c);
-	})
-	.toggleAttr("data-c", "3", false) // force off
-	.tap((el) => {
-		const element = el as HTMLElement;
-		console.log("toggleAttr force off:", element.dataset.c);
-	});
+	.remove();

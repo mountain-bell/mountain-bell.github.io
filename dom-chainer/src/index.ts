@@ -57,6 +57,26 @@ class ChainElements {
 		return this;
 	}
 
+	setStyle(property: string, value: string): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => {
+			if (el instanceof HTMLElement || el instanceof SVGElement) {
+				el.style.setProperty(property, value);
+			}
+		});
+		return this;
+	}
+
+	removeStyle(property: string): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => {
+			if (el instanceof HTMLElement || el instanceof SVGElement) {
+				el.style.removeProperty(property);
+			}
+		});
+		return this;
+	}
+
 	setAttr(name: string, value: string): this {
 		if (!this.enabled) return this;
 		this.elements.forEach((el) => el.setAttribute(name, value));
@@ -69,16 +89,92 @@ class ChainElements {
 		return this;
 	}
 
-	toggleAttr(name: string, value: string, force?: boolean): this {
+	html(htmlString: string): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => (el.innerHTML = htmlString));
+		return this;
+	}
+
+	text(textString: string): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => (el.textContent = textString));
+		return this;
+	}
+
+	val(value: string): this {
 		if (!this.enabled) return this;
 		this.elements.forEach((el) => {
-			const shouldSet = force === undefined ? !el.hasAttribute(name) : force;
-			if (shouldSet) {
-				el.setAttribute(name, value);
-			} else {
-				el.removeAttribute(name);
+			if (
+				el instanceof HTMLInputElement ||
+				el instanceof HTMLSelectElement ||
+				el instanceof HTMLTextAreaElement ||
+				el instanceof HTMLOptionElement ||
+				el instanceof HTMLButtonElement
+			) {
+				el.value = value;
 			}
 		});
+		return this;
+	}
+
+	append(...nodes: (string | Node)[]): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el, i) => {
+			const content =
+				i > 0
+					? nodes.map((n) => (n instanceof Node ? n.cloneNode(true) : n))
+					: nodes;
+			el.append(...content);
+		});
+		return this;
+	}
+
+	prepend(...nodes: (string | Node)[]): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el, i) => {
+			const content =
+				i > 0
+					? nodes.map((n) => (n instanceof Node ? n.cloneNode(true) : n))
+					: nodes;
+			el.prepend(...content);
+		});
+		return this;
+	}
+
+	before(...nodes: (string | Node)[]): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el, i) => {
+			const content =
+				i > 0
+					? nodes.map((n) => (n instanceof Node ? n.cloneNode(true) : n))
+					: nodes;
+			el.before(...content);
+		});
+		return this;
+	}
+
+	after(...nodes: (string | Node)[]): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el, i) => {
+			const content =
+				i > 0
+					? nodes.map((n) => (n instanceof Node ? n.cloneNode(true) : n))
+					: nodes;
+			el.after(...content);
+		});
+		return this;
+	}
+
+	remove(): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => el.remove());
+		this.elements = [];
+		return this;
+	}
+
+	empty(): this {
+		if (!this.enabled) return this;
+		this.elements.forEach((el) => (el.innerHTML = ""));
 		return this;
 	}
 }
