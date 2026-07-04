@@ -31,6 +31,7 @@
 		"dev:dom-chainer": "npm run -w dom-chainer dev"
 	},
 	"dependencies": {
+		"@mountain-bell/dom-chainer": "^0.1.0",
 		"@mountain-bell/dom-trigger": "^0.1.0",
 		"@mountain-bell/hello-world": "^0.1.0"
 	}
