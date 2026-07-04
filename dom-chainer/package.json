@@ -1,7 +1,7 @@
 {
 	"name": "@mountain-bell/dom-chainer",
 	"version": "0.1.0",
-	"description": "",
+	"description": "DOM 操作をメソッドチェーンで直感的に書ける軽量ユーティリティライブラリ",
 	"license": "MIT",
 	"author": {
 		"name": "mountain-bell",
@@ -15,10 +15,12 @@
 	"homepage": "https://x.com/mountain_bell",
 	"keywords": [
 		"dom",
-		"chainer",
-		"chain",
-		"element",
-		"animation",
+		"dom-manipulation",
+		"dom-utils",
+		"method-chaining",
+		"fluent-interface",
+		"vanilla-js",
+		"browser",
 		"javascript",
 		"js",
 		"typescript",
@@ -45,9 +47,9 @@
 	"scripts": {
 		"clean": "rimraf dist types-tmp browser",
 		"build:ts": "tsc -p tsconfig.json",
-		"build:npm": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\"",
-		"build:npm:esm": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.mjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\"",
-		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomChainer --outfile=browser/dom-chainer.js --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2025 mountain-bell */\" --footer:js=\"DomChainer = DomChainer.default || DomChainer;\"",
+		"build:npm": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2026 mountain-bell */\"",
+		"build:npm:esm": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.mjs --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2026 mountain-bell */\"",
+		"build:browser": "esbuild src/index.ts --bundle --format=iife --global-name=DomChainer --outfile=browser/dom-chainer.js --sourcemap --minify --banner:js=\"/*! MIT License | Copyright (c) 2026 mountain-bell */\" --footer:js=\"DomChainer = DomChainer.default || DomChainer;\"",
 		"build:types:raw": "tsc -p tsconfig.types.json",
 		"build:types:bundle": "dts-bundle-generator -o dist/index.d.ts types-tmp/index.d.ts",
 		"build:types:clean": "rimraf types-tmp",
