@@ -5,6 +5,16 @@
 
 ## 🚀 List of works
 
+### DomChainer / DOM チェイナー
+
+> DOM 操作をメソッドチェーンで直感的に書ける軽量ユーティリティライブラリ
+
+🛠️ JavaScript / TypeScript
+🔗 [https://github.com/mountain-bell/mountain-bell.github.io/tree/main/dom-chainer](https://github.com/mountain-bell/mountain-bell.github.io/tree/main/dom-chainer)
+📦 [https://www.npmjs.com/package/@mountain-bell/dom-chainer](https://www.npmjs.com/package/@mountain-bell/dom-chainer)
+
+---
+
 ### HelloWorld / ハローワールド
 
 > 国ごとの「Hello, World!」とタイムゾーン情報を返す軽量ライブラリ
