@@ -1,38 +1,16 @@
 {
 	"private": true,
-	"workspaces": [
-		"dom-trigger",
-		"hello-world",
-		"dom-chainer"
-	],
 	"devDependencies": {
 		"@eslint/js": "^9.39.2",
-		"dts-bundle-generator": "^9.5.1",
-		"esbuild": "^0.25.10",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"globals": "^17.2.0",
-		"npm-run-all": "^4.1.5",
-		"rimraf": "^6.0.1",
 		"stylelint": "^17.1.0",
 		"stylelint-config-recess-order": "^7.6.0",
-		"stylelint-config-standard-scss": "^17.0.0",
-		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.54.0"
+		"stylelint-config-standard-scss": "^17.0.0"
 	},
 	"scripts": {
-		"build": "npm run build --ws --if-present",
-		"dev": "npm run dev --ws --if-present",
-		"build:dom-trigger": "npm run -w dom-trigger build",
-		"dev:dom-trigger": "npm run -w dom-trigger dev",
-		"build:hello-world": "npm run -w hello-world build",
-		"dev:hello-world": "npm run -w hello-world dev",
-		"build:dom-chainer": "npm run -w dom-chainer build",
-		"dev:dom-chainer": "npm run -w dom-chainer dev"
-	},
-	"dependencies": {
-		"@mountain-bell/dom-chainer": "^0.1.0",
-		"@mountain-bell/dom-trigger": "^0.1.0",
-		"@mountain-bell/hello-world": "^0.1.0"
+		"lint": "eslint assets miracle-reversi process-csv screen-transition eslint.config.mjs",
+		"lint:css": "stylelint \"assets/*.css\" \"miracle-reversi/*.css\""
 	}
 }

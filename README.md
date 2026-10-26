@@ -1,6 +1,6 @@
 # 🌐 mountain-bell.github.io
 
-👋 **Hello!** This is my GitHub Pages + TypeScript playground.  
+👋 **Hello!** This is my GitHub Pages portfolio.<br>
 ✨ Feel free to take a look around and enjoy browsing!
 
 ## 🚀 List of works
@@ -10,27 +10,27 @@
 > DOM 操作をメソッドチェーンで直感的に書ける軽量ユーティリティライブラリ
 
 🛠️ JavaScript / TypeScript
-🔗 [https://github.com/mountain-bell/mountain-bell.github.io/tree/main/dom-chainer](https://github.com/mountain-bell/mountain-bell.github.io/tree/main/dom-chainer)
+🔗 [https://github.com/mountain-bell/dom-chainer](https://github.com/mountain-bell/dom-chainer)
 📦 [https://www.npmjs.com/package/@mountain-bell/dom-chainer](https://www.npmjs.com/package/@mountain-bell/dom-chainer)
 
 ---
 
 ### HelloWorld / ハローワールド
 
-> 国ごとの「Hello, World!」とタイムゾーン情報を返す軽量ライブラリ
+> 国・地域ごとの「Hello, World!」、代表的なタイムゾーン、現地の時計表示用日時を取得するライブラリ
 
-🛠️ JavaScript / TypeScript  
-🔗 [https://github.com/mountain-bell/mountain-bell.github.io/tree/main/hello-world](https://github.com/mountain-bell/mountain-bell.github.io/tree/main/hello-world)  
+🛠️ JavaScript / TypeScript<br>
+🔗 [https://github.com/mountain-bell/hello-world](https://github.com/mountain-bell/hello-world)<br>
 📦 [https://www.npmjs.com/package/@mountain-bell/hello-world](https://www.npmjs.com/package/@mountain-bell/hello-world)
 
 ---
 
 ### DomTrigger / DOM トリガー
 
-> HTML のクラス名だけで UI 挙動を記述できる軽量 DOM トリガーライブラリ
+> JavaScriptで登録したハンドラをHTMLのクラス名でイベントに結び付けるDOMユーティリティ
 
-🛠️ JavaScript / TypeScript  
-🔗 [https://github.com/mountain-bell/mountain-bell.github.io/tree/main/dom-trigger](https://github.com/mountain-bell/mountain-bell.github.io/tree/main/dom-trigger)  
+🛠️ JavaScript / TypeScript<br>
+🔗 [https://github.com/mountain-bell/dom-trigger](https://github.com/mountain-bell/dom-trigger)<br>
 📦 [https://www.npmjs.com/package/@mountain-bell/dom-trigger](https://www.npmjs.com/package/@mountain-bell/dom-trigger)
 
 ---
@@ -39,7 +39,7 @@
 
 > 特殊効果で逆転できるリバーシ（オセロ）ゲーム
 
-🛠️ JavaScript / jQuery  
+🛠️ JavaScript / jQuery<br>
 🔗 [https://mountain-bell.github.io/miracle-reversi/](https://mountain-bell.github.io/miracle-reversi/)
 
 ---
@@ -48,7 +48,7 @@
 
 > CSV ファイルを読み込んで任意のフォーマットに加工し、テキスト出力するツール
 
-🛠️ JavaScript / jQuery  
+🛠️ JavaScript / jQuery<br>
 🔗 [https://mountain-bell.github.io/process-csv/](https://mountain-bell.github.io/process-csv/)
 
 ---
@@ -57,5 +57,5 @@
 
 > 任意のパラメータを設定し、GET / POST 送信して画面遷移を確認するツール
 
-🛠️ JavaScript / jQuery  
+🛠️ JavaScript / jQuery<br>
 🔗 [https://mountain-bell.github.io/screen-transition/](https://mountain-bell.github.io/screen-transition/)

@@ -72,7 +72,9 @@ chore: update npm dependencies
 
 ## 🔖 その他ルール
 
-- **ライブラリ本体（chainx.js）への変更は英語で書く**
+- **JavaScript本体への変更は英語で書く**
+- **`package-lock.json`は他の変更と混ぜず、単独でコミットする**
+- **`package-lock.json`の追加・更新の件名は`chore: update package lock`に統一する**
 - **ドキュメント・scripts・test などは日本語混在でも OK**
   - 例：`docs: コマンド説明のセクションを追加`
 
